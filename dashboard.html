@@ -157,7 +157,7 @@
                 if (button.classList.contains('edit-btn')) {
                     try {
                         // 1. Pedir los datos completos de esa persona al servidor
-                        const response = await fetch(`http://localhost:3000/api/people/${id}`, {
+                        const response = await fetch(`/api/people/${id}`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         if (!response.ok) throw new Error('No se pudo obtener la información de la persona.');

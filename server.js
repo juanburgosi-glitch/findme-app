@@ -35,7 +35,7 @@ app.use(express.static('public'));
 
 // 4. CONEXIÓN A POSTGRESQL
 // Render proporciona DATABASE_URL automáticamente
-const connectionString = process.env.DATABASE_URL || 'postgres://juanadmin:Pismas12@localhost:45000/findme_db';
+const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({
     connectionString: connectionString,
