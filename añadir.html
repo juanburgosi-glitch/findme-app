@@ -85,49 +85,61 @@
 
     <script src="main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const API_URL = 'https://findme-app-backend.onrender.com';
-            const form = document.getElementById('add-person-form');
+    document.addEventListener('DOMContentLoaded', () => {
+        const addPersonForm = document.getElementById('add-person-form');
+        const API_URL = 'https://findme-app-backend.onrender.com'; // Tu URL de Render
+        const token = localStorage.getItem('token');
 
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
-                    window.location.href = 'index.html';
-                    return;
+        // Redirigir si no hay token
+        if (!token) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        addPersonForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // 1. Crear un objeto FormData
+            // Este objeto es especial para enviar formularios que incluyen archivos.
+            const formData = new FormData();
+
+            // 2. Añadir todos los campos del formulario al objeto FormData
+            formData.append('fullName', document.getElementById('full-name').value);
+            formData.append('contactNumber', document.getElementById('contact-number').value);
+            formData.append('preferredHospital', document.getElementById('preferred-hospital').value);
+            formData.append('medicalConditions', document.getElementById('medical-conditions').value);
+            
+            // También añadimos el archivo de imagen. Si no se selecciona ninguno, no pasa nada.
+            const imageInput = document.getElementById('profile-image');
+            if (imageInput.files[0]) {
+                formData.append('profileImage', imageInput.files[0]);
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/people`, {
+                    method: 'POST',
+                    headers: {
+                        // 3. ¡IMPORTANTE! NO especificamos 'Content-Type'. 
+                        // El navegador lo hará automáticamente por nosotros al usar FormData.
+                        'Authorization': `Bearer ${token}`
+                    },
+                    // 4. Enviamos el objeto FormData directamente en el body.
+                    body: formData 
+                });
+
+                if (response.ok) {
+                    alert('Persona añadida con éxito');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al añadir la persona: ${errorData.error || 'Ocurrió un error.'}`);
                 }
-
-                const personData = {
-                    fullName: document.getElementById('full-name').value,
-                    contactNumber: document.getElementById('contact-number').value,
-                    preferredHospital: document.getElementById('preferred-hospital').value,
-                    medicalConditions: document.getElementById('medical-conditions').value
-                };
-
-                try {
-                    const response = await fetch(`${API_URL}/api/people`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(personData)
-                    });
-
-                    if (response.ok) {
-                        alert('Persona añadida con éxito');
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        const errorData = await response.json();
-                        alert(`Error al añadir la persona: ${errorData.error || 'Ocurrió un error.'}`);
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    alert('No se pudo conectar con el servidor.');
-                }
-            });
+            } catch (error) {
+                console.error('Error de red:', error);
+                alert('No se pudo conectar con el servidor.');
+            }
         });
+    });
     </script>
 </body>
 </html>
