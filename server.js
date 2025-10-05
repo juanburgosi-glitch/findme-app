@@ -1,5 +1,5 @@
 // =================================================================
-//          SERVIDOR BACK-END COMPLETO CON UPLOAD DE IMÁGENES
+//          SERVIDOR BACK-END CONFIGURADO PARA RENDER
 // =================================================================
 
 // 1. IMPORTAR LIBRERÍAS
@@ -10,33 +10,72 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs'); // Módulo para manejar archivos del sistema
+const fs = require('fs');
 
 // 2. CONFIGURACIÓN INICIAL
 const app = express();
-const PORT = 3000;
-const JWT_SECRET = 'este_es_un_secreto_muy_largo_y_dificil_de_adivinar_reemplazame';
+const PORT = process.env.PORT || 3000; // Render asigna el puerto automáticamente
+const JWT_SECRET = process.env.JWT_SECRET || 'cambiar_en_produccion_usar_variable_de_entorno';
 
-app.use(cors());
+// 3. CONFIGURAR CORS PARA PERMITIR GITHUB PAGES
+const corsOptions = {
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:8080',
+        'https://juanburgosi-glitch.github.io', // Tu GitHub Pages URL
+        process.env.FRONTEND_URL // Variable de entorno adicional
+    ].filter(Boolean),
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static('public'));
 
-// 3. CONEXIÓN A POSTGRESQL
-const connectionString = 'postgres://juanadmin:Pismas12@localhost:45000/findme_db'; 
-const pool = new Pool({ connectionString: connectionString });
+// 4. CONEXIÓN A POSTGRESQL
+// Render proporciona DATABASE_URL automáticamente
+const connectionString = process.env.DATABASE_URL || 'postgres://juanadmin:Pismas12@localhost:45000/findme_db';
 
+const pool = new Pool({
+    connectionString: connectionString,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
-// 4. CONFIGURACIÓN DE MULTER PARA SUBIDA DE ARCHIVOS
+// 5. VERIFICAR CONEXIÓN A LA BASE DE DATOS
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Error conectando a la base de datos:', err);
+    } else {
+        console.log('✅ Conectado a PostgreSQL:', res.rows[0]);
+    }
+});
+
+// 6. CONFIGURACIÓN DE MULTER
 const storage = multer.diskStorage({
     destination: './public/uploads/',
     filename: function(req, file, cb){
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
+
 const upload = multer({
     storage: storage,
-    limits:{fileSize: 10000000} // Límite de 10MB
+    limits: { fileSize: 10000000 } // 10MB
 }).single('profileImage');
+
+// Crear directorio uploads si no existe
+const uploadsDir = './public/uploads';
+if (!fs.existsSync(uploadsDir)){
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// ============= RUTAS =============
+
+// Ruta de prueba
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', message: 'Servidor funcionando correctamente' });
+});
 
 // RUTA PARA SUBIR IMÁGENES
 app.post('/api/upload', verifyToken, (req, res) => {
@@ -54,7 +93,7 @@ app.post('/api/upload', verifyToken, (req, res) => {
     });
 });
 
-// 5. RUTAS DE AUTENTICACIÓN
+// RUTAS DE AUTENTICACIÓN
 app.post('/api/register', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -70,6 +109,7 @@ app.post('/api/register', async (req, res) => {
             user: result.rows[0],
         });
     } catch (error) {
+        console.error('Error en registro:', error);
         if (error.code === '23505') {
             return res.status(409).json({ error: 'El email ya está registrado.' });
         }
@@ -91,11 +131,12 @@ app.post('/api/login', async (req, res) => {
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '8h' });
         res.json({ message: 'Inicio de sesión exitoso.', token: token });
     } catch (error) {
+        console.error('Error en login:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
 
-// 6. MIDDLEWARE DE VERIFICACIÓN DE TOKEN
+// MIDDLEWARE DE VERIFICACIÓN DE TOKEN
 function verifyToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -109,9 +150,9 @@ function verifyToken(req, res, next) {
     } catch (error) {
         res.status(403).json({ error: 'Token inválido o expirado.' });
     }
-};
+}
 
-// 7. RUTAS DE PERFIL DE USUARIO
+// RUTAS DE PERFIL DE USUARIO
 app.get('/api/user/profile', verifyToken, async (req, res) => {
     try {
         const query = 'SELECT id, email, first_name, middle_name, last_name, second_last_name, contact_number FROM users WHERE id = $1';
@@ -121,6 +162,7 @@ app.get('/api/user/profile', verifyToken, async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (error) {
+        console.error('Error obteniendo perfil:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
@@ -138,13 +180,12 @@ app.put('/api/user/profile', verifyToken, async (req, res) => {
         const result = await pool.query(query, values);
         res.json({ message: 'Perfil actualizado con éxito.', user: result.rows[0] });
     } catch (error) {
+        console.error('Error actualizando perfil:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
 
-// 8. RUTAS DE GESTIÓN DE PERSONAS
-
-// [GET] OBTENER TODAS LAS PERSONAS (SOLO LAS ACTIVAS)
+// RUTAS DE GESTIÓN DE PERSONAS
 app.get('/api/people', verifyToken, async (req, res) => {
     try {
         const query = 'SELECT id, full_name, medical_conditions, image_url FROM people WHERE user_id = $1 AND is_deleted = FALSE ORDER BY created_at DESC';
@@ -152,11 +193,11 @@ app.get('/api/people', verifyToken, async (req, res) => {
         const data = result.rows.map(person => ({ ...person, title: person.medical_conditions }));
         res.json(data);
     } catch (error) {
+        console.error('Error obteniendo personas:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
 
-// [GET] OBTENER LOS DETALLES DE UNA PERSONA ESPECÍFICA
 app.get('/api/people/:id', verifyToken, async (req, res) => {
     const { id } = req.params;
     try {
@@ -167,11 +208,11 @@ app.get('/api/people/:id', verifyToken, async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (error) {
+        console.error('Error obteniendo persona:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
 
-// [POST] AÑADIR UNA NUEVA PERSONA
 app.post('/api/people', verifyToken, async (req, res) => {
     const { fullName, contactNumber, preferredHospital, medicalConditions, imageUrl } = req.body;
     if (!fullName) {
@@ -183,11 +224,11 @@ app.post('/api/people', verifyToken, async (req, res) => {
         const result = await pool.query(query, values);
         res.status(201).json(result.rows[0]);
     } catch (error) {
+        console.error('Error creando persona:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
 
-// [PUT] ACTUALIZAR UNA PERSONA
 app.put('/api/people/:id', verifyToken, async (req, res) => {
     const { id } = req.params;
     const { fullName, contactNumber, preferredHospital, medicalConditions, imageUrl } = req.body;
@@ -196,7 +237,6 @@ app.put('/api/people/:id', verifyToken, async (req, res) => {
     }
     
     try {
-        // Lógica para borrar la imagen antigua
         const findOldImageQuery = 'SELECT image_url FROM people WHERE id = $1 AND user_id = $2';
         const oldImageResult = await pool.query(findOldImageQuery, [id, req.userId]);
 
@@ -212,7 +252,6 @@ app.put('/api/people/:id', verifyToken, async (req, res) => {
             });
         }
         
-        // Procede con la actualización en la base de datos
         const updateQuery = `UPDATE people SET full_name = $1, contact_number = $2, preferred_hospital = $3, medical_conditions = $4, image_url = $5 WHERE id = $6 AND user_id = $7 RETURNING *;`;
         const values = [fullName, contactNumber, preferredHospital, medicalConditions, imageUrl, id, req.userId];
         const result = await pool.query(updateQuery, values);
@@ -228,12 +267,9 @@ app.put('/api/people/:id', verifyToken, async (req, res) => {
     }
 });
 
-
-// [DELETE] MARCAR COMO BORRADO Y ELIMINAR IMAGEN
 app.delete('/api/people/:id', verifyToken, async (req, res) => {
     const { id } = req.params;
     try {
-        // Lógica para borrar la imagen asociada
         const findImageQuery = 'SELECT image_url FROM people WHERE id = $1 AND user_id = $2';
         const imageResult = await pool.query(findImageQuery, [id, req.userId]);
 
@@ -246,7 +282,6 @@ app.delete('/api/people/:id', verifyToken, async (req, res) => {
             });
         }
 
-        // Procede con el borrado lógico
         const deleteQuery = 'UPDATE people SET is_deleted = TRUE WHERE id = $1 AND user_id = $2';
         const deleteResult = await pool.query(deleteQuery, [id, req.userId]);
 
@@ -260,8 +295,6 @@ app.delete('/api/people/:id', verifyToken, async (req, res) => {
     }
 });
 
-
-// RUTA PARA REVERTIR BORRADO
 app.post('/api/people/:id/revert', verifyToken, async (req, res) => {
     const { id } = req.params;
     try {
@@ -272,6 +305,7 @@ app.post('/api/people/:id/revert', verifyToken, async (req, res) => {
         }
         res.status(200).json({ message: 'La eliminación ha sido revertida.' });
     } catch (error) {
+        console.error('Error revirtiendo eliminación:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
@@ -279,13 +313,11 @@ app.post('/api/people/:id/revert', verifyToken, async (req, res) => {
 app.post('/api/location/update', verifyToken, async (req, res) => {
     const { lat, lon, personId } = req.body;
     
-    // Validamos que tengamos los datos necesarios
     if (lat === undefined || lon === undefined || personId === undefined) {
         return res.status(400).json({ error: 'Faltan datos de latitud, longitud o ID de la persona.' });
     }
 
     try {
-        // Guardamos las nuevas coordenadas en la base de datos para la persona especificada
         const query = 'UPDATE people SET last_lat = $1, last_lon = $2 WHERE id = $3 AND user_id = $4';
         const result = await pool.query(query, [lat, lon, personId, req.userId]);
 
@@ -300,7 +332,8 @@ app.post('/api/location/update', verifyToken, async (req, res) => {
     }
 });
 
-// 9. INICIAR SERVIDOR
+// INICIAR SERVIDOR
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);
+    console.log(`🚀 Servidor backend corriendo en puerto ${PORT}`);
+    console.log(`🔗 Ambiente: ${process.env.NODE_ENV || 'desarrollo'}`);
 });
