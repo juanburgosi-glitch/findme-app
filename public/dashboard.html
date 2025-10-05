@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FindMe Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#13a4ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "card-dark": "#1a2831",
+                        "border-dark": "#2a3c47",
+                    },
+                    fontFamily: { display: ["Inter"], },
+                    borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+                },
+            },
+        };
+    </script>
+    <style> .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; } </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="flex flex-col min-h-screen pt-16">
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Mis Personas a Cargo</h2>
+                    <a href="añadir.html" class="flex items-center gap-2 bg-primary text-white font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-base"> add </span><span>Agregar Persona</span>
+                    </a>
+                </div>
+                <div class="bg-white dark:bg-card-dark rounded-xl shadow-md overflow-hidden border border-primary/20 dark:border-border-dark">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="border-b border-primary/20 dark:border-border-dark">
+                                <tr>
+                                    <th class="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Nombre</th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="people-table-body" class="divide-y divide-primary/10 dark:divide-border-dark"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-lg border border-border-dark my-8">
+            <div class="p-6 border-b border-border-dark">
+                <h3 class="text-xl font-bold text-white">Editar Información</h3>
+            </div>
+            <form id="edit-form" class="p-6 space-y-6">
+                <input type="hidden" id="edit-person-id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300">Foto de Perfil</label>
+                    <div class="mt-2 flex items-center gap-4">
+                        <img id="edit-image-preview" class="h-16 w-16 rounded-full object-cover bg-border-dark" src="https://via.placeholder.com/150" alt="Vista previa">
+                        <input type="file" id="edit-image-upload" name="profileImage" accept="image/*" class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"/>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-full-name">Nombre Completo</label>
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-full-name" type="text" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-contact-number">Teléfono de Contacto</label>
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-contact-number" type="tel" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-preferred-hospital">Hospital de Preferencia</label>
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-preferred-hospital" type="text" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-medical-conditions">Condiciones Médicas</label>
+                    <textarea class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-medical-conditions" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button id="cancel-edit-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-border-dark text-white hover:bg-opacity-80">Cancelar</button>
+                    <button class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-primary hover:bg-primary/90" type="submit">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-md border border-border-dark">
+            <div class="p-6 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50">
+                    <span class="material-symbols-outlined text-red-400"> warning </span>
+                </div>
+                <h3 class="text-lg font-bold text-white mt-4">Confirmar Eliminación</h3>
+                <p class="text-sm text-slate-400 mt-2">
+                    ¿Estás seguro de que deseas eliminar a <strong id="delete-person-name" class="font-bold"></strong>?
+                </p>
+                <input type="hidden" id="delete-person-id">
+            </div>
+            <div class="bg-background-dark/50 px-6 py-4 flex justify-end gap-4">
+                <button id="cancel-delete-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-border-dark text-white hover:bg-opacity-80">Cancelar</button>
+                <button id="confirm-delete-btn" class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="undo-toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-between gap-4 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg w-auto">
+        <span id="undo-message"></span>
+        <button id="undo-btn" class="font-bold text-primary hover:underline">Deshacer</button>
+    </div>
+    
+    <script src="main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Debes iniciar sesión para ver esta página.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const tableBody = document.getElementById('people-table-body');
+            
+            const editModal = document.getElementById('edit-modal');
+            const editForm = document.getElementById('edit-form');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const editPersonId = document.getElementById('edit-person-id');
+            const editImageUpload = document.getElementById('edit-image-upload');
+            const editImagePreview = document.getElementById('edit-image-preview');
+            const editFullName = document.getElementById('edit-full-name');
+            const editContactNumber = document.getElementById('edit-contact-number');
+            const editPreferredHospital = document.getElementById('edit-preferred-hospital');
+            const editMedicalConditions = document.getElementById('edit-medical-conditions');
+            let currentImageUrl = null;
+
+            const deleteModal = document.getElementById('delete-modal');
+            const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            const deletePersonId = document.getElementById('delete-person-id');
+            const deletePersonName = document.getElementById('delete-person-name');
+
+            const undoToast = document.getElementById('undo-toast');
+            const undoMessage = document.getElementById('undo-message');
+            const undoBtn = document.getElementById('undo-btn');
+            let lastDeletedId = null;
+            let undoTimeout;
+
+            function renderTable(peopleData) {
+                tableBody.innerHTML = '';
+                if (!peopleData || peopleData.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="2" class="text-center px-6 py-8 text-slate-500 dark:text-slate-400">No hay personas registradas. Añade una para comenzar.</td></tr>`;
+                    return;
+                }
+                peopleData.forEach(person => {
+                    const defaultIcon = `<div class="h-10 w-10 rounded-full bg-border-dark flex items-center justify-center text-primary"><span class="material-symbols-outlined !text-2xl">person</span></div>`;
+                    const personImage = person.image_url 
+                        ? `<img src="${person.image_url}" alt="${person.full_name}" class="h-10 w-10 rounded-full object-cover">` 
+                        : defaultIcon;
+
+                    const row = `
+                        <tr class="hover:bg-primary/5 dark:hover:bg-background-dark transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-4">
+                                    ${personImage}
+                                    <div>
+                                        <div class="person-name text-sm font-medium text-slate-800 dark:text-slate-100">${person.full_name}</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">${person.title || 'Sin descripción'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-4">
+                                    <a href="profile.html?id=${person.id}" class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary" title="Ver"><span class="material-symbols-outlined text-lg">visibility</span></a>
+                                    <button data-id="${person.id}" class="edit-btn text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary" title="Editar"><span class="material-symbols-outlined text-lg">edit</span></button>
+                                    <button data-id="${person.id}" class="delete-btn text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-500" title="Eliminar"><span class="material-symbols-outlined text-lg">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            async function fetchAndRenderPeople() {
+                try {
+                    const response = await fetch('/api/people', { headers: { 'Authorization': `Bearer ${token}` } });
+                    if (!response.ok) throw new Error('Error del servidor');
+                    const people = await response.json();
+                    renderTable(people);
+                } catch (error) {
+                    console.error('Error al cargar las personas:', error);
+                    tableBody.innerHTML = `<tr><td colspan="2" class="text-center px-6 py-8 text-red-500">Error al cargar datos.</td></tr>`;
+                }
+            }
+            
+            tableBody.addEventListener('click', async (event) => {
+                const button = event.target.closest('button');
+                if (!button) return;
+                const id = button.dataset.id;
+
+                if (button.classList.contains('delete-btn')) {
+                    const name = button.closest('tr').querySelector('.person-name').textContent;
+                    deletePersonName.textContent = name;
+                    deletePersonId.value = id;
+                    deleteModal.classList.remove('hidden');
+                }
+
+                if (button.classList.contains('edit-btn')) {
+                    try {
+                        const response = await fetch(`/api/people/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        if (!response.ok) throw new Error('No se pudo obtener la información de la persona.');
+                        const person = await response.json();
+                        
+                        editPersonId.value = person.id;
+                        currentImageUrl = person.image_url;
+                        editImagePreview.src = person.image_url || 'https://via.placeholder.com/150';
+                        editFullName.value = person.full_name || '';
+                        editContactNumber.value = person.contact_number || '';
+                        editPreferredHospital.value = person.preferred_hospital || '';
+                        editMedicalConditions.value = person.medical_conditions || '';
+                        editImageUpload.value = '';
+
+                        editModal.classList.remove('hidden');
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                }
+            });
+            
+            editImageUpload.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    editImagePreview.src = URL.createObjectURL(file);
+                }
+            });
+
+            editForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                let imageUrl = currentImageUrl;
+                const file = editImageUpload.files[0];
+
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('profileImage', file);
+                    try {
+                        const uploadResponse = await fetch('/api/upload', {
+                            method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
+                        });
+                        if (uploadResponse.status === 401 || uploadResponse.status === 403) {
+                            alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+                            window.location.href = 'index.html';
+                            return;
+                        }
+                        const uploadResult = await uploadResponse.json();
+                        if (!uploadResponse.ok) {
+                            throw new Error(uploadResult.error || 'Error al subir la nueva imagen.');
+                        }
+                        imageUrl = uploadResult.filePath;
+                    } catch (error) {
+                        alert(`Error en la subida: ${error.message}`);
+                        return;
+                    }
+                }
+                
+                const updatedData = {
+                    fullName: editFullName.value, contactNumber: editContactNumber.value,
+                    preferredHospital: editPreferredHospital.value, medicalConditions: editMedicalConditions.value,
+                    imageUrl: imageUrl
+                };
+
+                try {
+                    const response = await fetch(`/api/people/${editPersonId.value}`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify(updatedData)
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'No se pudo actualizar la información.');
+                    }
+                    alert('Persona actualizada con éxito.');
+                    editModal.classList.add('hidden');
+                    fetchAndRenderPeople();
+                } catch (error) {
+                    alert(`Error al guardar: ${error.message}`);
+                }
+            });
+
+            cancelEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+            cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
+
+            confirmDeleteBtn.addEventListener('click', async () => {
+                const id = deletePersonId.value;
+                const name = deletePersonName.textContent;
+                try {
+                    const response = await fetch(`/api/people/${id}`, { 
+                        method: 'DELETE', 
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    // ===== CORRECCIÓN AQUÍ =====
+                    const result = await response.json(); // Leemos la respuesta como JSON
+                    
+                    if (!response.ok) {
+                        // Si hay un error, usamos el mensaje del servidor
+                        throw new Error(result.error || 'Error al eliminar el registro.');
+                    }
+                    
+                    fetchAndRenderPeople();
+                    showUndoToast(id, name);
+
+                } catch (error) {
+                    alert(error.message);
+                } finally {
+                    deleteModal.classList.add('hidden');
+                }
+            });
+
+            function showUndoToast(personId, personName) {
+                lastDeletedId = personId;
+                undoMessage.textContent = `Se eliminó a ${personName}.`;
+                undoToast.classList.remove('hidden');
+
+                if (undoTimeout) clearTimeout(undoTimeout);
+                undoTimeout = setTimeout(() => {
+                    undoToast.classList.add('hidden');
+                    lastDeletedId = null;
+                }, 5000);
+            }
+
+            undoBtn.addEventListener('click', async () => {
+                if (!lastDeletedId) return;
+                if (undoTimeout) clearTimeout(undoTimeout);
+
+                try {
+                    const response = await fetch(`/api/people/${lastDeletedId}/revert`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'No se pudo revertir la eliminación.');
+                    }
+
+                    undoToast.classList.add('hidden');
+                    fetchAndRenderPeople();
+                    lastDeletedId = null;
+                } catch (error) {
+                    alert(error.message);
+                }
+            });
+
+            fetchAndRenderPeople();
+        });
+    </script>
+</body>
+</html>

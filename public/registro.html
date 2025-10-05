@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FindMe - Create Account</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root { --background-dark: #101c22; --background-light: #f6f7f8; --text-light: #ffffff; --text-dark: #1f2937; --input-bg-dark: #1f2937; --input-border-dark: #374151; --button-secondary-bg-dark: #374151; --button-secondary-hover-dark: #4b5563; --primary: #13a4ec; }
+        html.dark { --background: var(--background-dark); --text: var(--text-light); --input-bg: var(--input-bg-dark); --input-border: var(--input-border-dark); --button-secondary-bg: var(--button-secondary-bg-dark); --button-secondary-hover: var(--button-secondary-hover-dark); }
+        html:not(.dark) { --background: var(--background-light); --text: var(--text-dark); --input-bg: #ffffff; --input-border: #d1d5db; --button-secondary-bg: #ffffff; --button-secondary-hover: #f9fafb; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { primary: "var(--primary)", background: "var(--background)", "text-color": "var(--text)", "input-bg": "var(--input-bg)", "input-border": "var(--input-border)", "button-secondary-bg": "var(--button-secondary-bg)", "button-secondary-hover": "var(--button-secondary-hover)" },
+                    fontFamily: { display: ["Inter", "sans-serif"] },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background font-display text-text-color">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="bg-[var(--background-dark)] rounded-xl shadow-2xl w-full max-w-md p-8 m-4">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-text-color">Create your account</h1>
+                <p class="mt-2 text-sm text-gray-400">Join FindMe to share medical info and your location in emergencies.</p>
+            </div>
+            <form id="register-form" class="mt-8 space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400" for="email">Email address</label>
+                    <div class="mt-1">
+                        <input autocomplete="email" class="w-full px-4 py-3 rounded-lg bg-input-bg border-input-border text-text-color focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" id="email" name="email" placeholder="you@example.com" required="" type="email" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400" for="password">Password</label>
+                    <div class="mt-1">
+                        <input autocomplete="new-password" class="w-full px-4 py-3 rounded-lg bg-input-bg border-input-border text-text-color focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" id="password" name="password" placeholder="••••••••" required="" type="password" />
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row-reverse gap-4 pt-4">
+                    <button class="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark dark:focus:ring-offset-background-dark focus:ring-primary" type="submit">
+                        Create Account
+                    </button>
+                    <a href="index.html" class="w-full inline-flex justify-center py-3 px-4 border border-input-border shadow-sm text-sm font-medium rounded-lg text-text-color bg-button-secondary-bg hover:bg-button-secondary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark dark:focus:ring-offset-background-dark focus:ring-primary/50">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.documentElement.classList.add('dark');
+
+        const form = document.getElementById('register-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
+                    window.location.href = 'index.html';
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error de red:', error);
+                alert('No se pudo conectar con el servidor.');
+            }
+        });
+    </script>
+</body>
+</html>

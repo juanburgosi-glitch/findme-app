@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FindMe Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#13a4ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "card-dark": "#1a2831",
+                        "border-dark": "#2a3c47",
+                    },
+                    fontFamily: { display: ["Inter"], },
+                    borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+                },
+            },
+        };
+    </script>
+    <style> .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; } </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="flex flex-col min-h-screen">
+        <header class="bg-background-light dark:bg-background-dark sticky top-0 z-20 border-b border-primary/20 dark:border-border-dark">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 text-primary">
+                            <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                            <h1 class="text-xl font-bold text-slate-800 dark:text-white">FindMe</h1>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button class="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors"><span class="material-symbols-outlined"> notifications </span></button>
+                        
+                        <div class="relative">
+                            <button id="user-menu-button" class="w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined"> account_circle </span>
+                            </button>
+                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-card-dark rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-30">
+                                <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+                                    <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Mi Perfil</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Ajustes</a>
+                                    <div class="border-t border-border-dark my-1"></div>
+                                    <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20">
+                                        Cerrar Sesión
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Mis Personas a Cargo</h2>
+                    <a href="añadir.html" class="flex items-center gap-2 bg-primary text-white font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-base"> add </span><span>Agregar Persona</span>
+                    </a>
+                </div>
+                <div class="bg-white dark:bg-card-dark rounded-xl shadow-md overflow-hidden border border-primary/20 dark:border-border-dark">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="border-b border-primary/20 dark:border-border-dark">
+                                <tr>
+                                    <th class="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Nombre</th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="people-table-body" class="divide-y divide-primary/10 dark:divide-border-dark"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-lg border border-border-dark">
+            <div class="p-6 border-b border-border-dark">
+                <h3 class="text-xl font-bold text-white">Editar Información</h3>
+            </div>
+            <form id="edit-form" class="p-6 space-y-4">
+                <input type="hidden" id="edit-person-id">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-full-name">Nombre Completo</label>
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-full-name" type="text" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-contact-number">Teléfono de Contacto</label>
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-contact-number" type="tel" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-preferred-hospital">Hospital de Preferencia</label>
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-preferred-hospital" type="text" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300" for="edit-medical-conditions">Condiciones Médicas</label>
+                    <textarea class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-medical-conditions" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button id="cancel-edit-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-border-dark text-white hover:bg-opacity-80">Cancelar</button>
+                    <button class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-primary hover:bg-primary/90" type="submit">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elementos del DOM ---
+            const tableBody = document.getElementById('people-table-body');
+            const token = localStorage.getItem('token');
+            // Elementos del Modal
+            const editModal = document.getElementById('edit-modal');
+            const editForm = document.getElementById('edit-form');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const editPersonId = document.getElementById('edit-person-id');
+            const editFullName = document.getElementById('edit-full-name');
+            const editContactNumber = document.getElementById('edit-contact-number');
+            const editPreferredHospital = document.getElementById('edit-preferred-hospital');
+            const editMedicalConditions = document.getElementById('edit-medical-conditions');
+            
+            // --- Lógica del Menú Desplegable ---
+            // ... (código del menú de usuario y logout)
+
+            // --- Lógica para Cargar la Tabla ---
+            // ... (código existente para renderTable y fetchAndRenderPeople)
+            
+            // --- MANEJO DE EVENTOS ---
+            tableBody.addEventListener('click', async (event) => {
+                const button = event.target.closest('button');
+                if (!button) return;
+                const id = button.dataset.id;
+
+                // Si se hace clic en el botón de ELIMINAR
+                if (button.classList.contains('delete-btn')) {
+                    // ... (código existente para eliminar)
+                }
+
+                // Si se hace clic en el botón de EDITAR
+                if (button.classList.contains('edit-btn')) {
+                    try {
+                        // 1. Pedir los datos completos de esa persona al servidor
+                        const response = await fetch(`http://localhost:3000/api/people/${id}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (!response.ok) throw new Error('No se pudo obtener la información de la persona.');
+                        
+                        const person = await response.json();
+                        
+                        // 2. Rellenar el formulario del modal con los datos
+                        editPersonId.value = person.id;
+                        editFullName.value = person.full_name || '';
+                        editContactNumber.value = person.contact_number || '';
+                        editPreferredHospital.value = person.preferred_hospital || '';
+                        editMedicalConditions.value = person.medical_conditions || '';
+
+                        // 3. Mostrar el modal
+                        editModal.classList.remove('hidden');
+
+                    } catch (error) {
+                        console.error('Error al abrir modal de edición:', error);
+                        alert(error.message);
+                    }
+                }
+            });
+
+            // Lógica para GUARDAR los cambios del modal
+            editForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const id = editPersonId.value;
+                const updatedData = {
+                    fullName: editFullName.value,
+                    contactNumber: editContactNumber.value,
+                    preferredHospital: editPreferredHospital.value,
+                    medicalConditions: editMedicalConditions.value
+                };
+
+                try {
+                    const response = await fetch(`http://localhost:3000/api/people/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(updatedData)
+                    });
+
+                    if (response.ok) {
+                        alert('Persona actualizada con éxito.');
+                        editModal.classList.add('hidden'); // Ocultar modal
+                        fetchAndRenderPeople(); // Recargar la tabla
+                    } else {
+                        throw new Error('No se pudo actualizar la información.');
+                    }
+                } catch (error) {
+                    console.error('Error al guardar cambios:', error);
+                    alert(error.message);
+                }
+            });
+
+            // Lógica para CANCELAR la edición
+            cancelEditBtn.addEventListener('click', () => {
+                editModal.classList.add('hidden');
+            });
+            
+            // --- LLAMADA INICIAL ---
+            // fetchAndRenderPeople(); // Esta llamada ya está en tu código
+        });
+    </script>
+</body>
+</html>
