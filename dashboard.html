@@ -120,11 +120,11 @@
         </div>
     </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- Elementos del DOM ---
             const tableBody = document.getElementById('people-table-body');
+            const API_URL = 'https://findme-app-backend.onrender.com';
             const token = localStorage.getItem('token');
             // Elementos del Modal
             const editModal = document.getElementById('edit-modal');
@@ -135,36 +135,115 @@
             const editContactNumber = document.getElementById('edit-contact-number');
             const editPreferredHospital = document.getElementById('edit-preferred-hospital');
             const editMedicalConditions = document.getElementById('edit-medical-conditions');
-            
-            // --- Lógica del Menú Desplegable ---
-            // ... (código del menú de usuario y logout)
+            // Elementos del menú de usuario
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+            const logoutBtn = document.getElementById('logout-btn');
 
-            // --- Lógica para Cargar la Tabla ---
-            // ... (código existente para renderTable y fetchAndRenderPeople)
+            // --- Lógica de Autenticación y Menú ---
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
             
-            // --- MANEJO DE EVENTOS ---
+            userMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                userMenu.classList.toggle('hidden');
+            });
+
+            window.addEventListener('click', () => {
+                if (!userMenu.classList.contains('hidden')) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('token');
+                window.location.href = 'index.html';
+            });
+
+            // --- Lógica para Cargar y Renderizar la Tabla ---
+            function renderTable(people) {
+                tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizar
+                if (people.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="2" class="text-center py-8 text-slate-500">No tienes personas a tu cargo. ¡Añade una!</td></tr>';
+                    return;
+                }
+                people.forEach(person => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full object-cover" src="${person.profile_image_url ? (API_URL + '/' + person.profile_image_url) : 'https://via.placeholder.com/150'}" alt="${person.full_name}">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-base font-semibold text-slate-800 dark:text-white">${person.full_name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <a href="profile.html?id=${person.id}" class="text-primary hover:text-primary/80 transition-colors p-2">Ver Ficha</a>
+                            <button data-id="${person.id}" class="edit-btn text-blue-500 hover:text-blue-400 transition-colors p-2">Editar</button>
+                            <button data-id="${person.id}" class="delete-btn text-red-500 hover:text-red-400 transition-colors p-2">Eliminar</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            async function fetchAndRenderPeople() {
+                try {
+                    const response = await fetch(`${API_URL}/api/people`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) {
+                        if (response.status === 401) { // Token inválido o expirado
+                            localStorage.removeItem('token');
+                            window.location.href = 'index.html';
+                        }
+                        throw new Error('No se pudieron cargar los datos.');
+                    }
+                    const people = await response.json();
+                    renderTable(people);
+                } catch (error) {
+                    console.error('Error al cargar personas:', error);
+                    tableBody.innerHTML = `<tr><td colspan="2" class="text-center py-8 text-red-500">${error.message}</td></tr>`;
+                }
+            }
+
+            // --- MANEJO DE EVENTOS DE LA TABLA ---
             tableBody.addEventListener('click', async (event) => {
                 const button = event.target.closest('button');
                 if (!button) return;
                 const id = button.dataset.id;
 
-                // Si se hace clic en el botón de ELIMINAR
                 if (button.classList.contains('delete-btn')) {
-                    // ... (código existente para eliminar)
+                    if (confirm('¿Estás seguro de que quieres eliminar a esta persona?')) {
+                        try {
+                            const response = await fetch(`${API_URL}/api/people/${id}`, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            if (!response.ok) throw new Error('No se pudo eliminar.');
+                            fetchAndRenderPeople(); // Recargar la tabla
+                        } catch (error) {
+                            alert(error.message);
+                        }
+                    }
                 }
 
-                // Si se hace clic en el botón de EDITAR
                 if (button.classList.contains('edit-btn')) {
                     try {
-                        // 1. Pedir los datos completos de esa persona al servidor
-                        const response = await fetch(`/api/people/${id}`, {
+                        // 1. Pedir los datos de la persona al servidor
+                        const response = await fetch(`${API_URL}/api/people/${id}`, { // ✅ CORRECCIÓN 1
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
-                        if (!response.ok) throw new Error('No se pudo obtener la información de la persona.');
+                        if (!response.ok) throw new Error('No se pudo obtener la información.');
                         
                         const person = await response.json();
                         
-                        // 2. Rellenar el formulario del modal con los datos
+                        // 2. Rellenar el formulario del modal
                         editPersonId.value = person.id;
                         editFullName.value = person.full_name || '';
                         editContactNumber.value = person.contact_number || '';
@@ -175,16 +254,15 @@
                         editModal.classList.remove('hidden');
 
                     } catch (error) {
-                        console.error('Error al abrir modal de edición:', error);
+                        console.error('Error al abrir modal:', error);
                         alert(error.message);
                     }
                 }
             });
 
-            // Lógica para GUARDAR los cambios del modal
+            // --- Lógica del Modal de Edición ---
             editForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
-                
                 const id = editPersonId.value;
                 const updatedData = {
                     fullName: editFullName.value,
@@ -194,7 +272,7 @@
                 };
 
                 try {
-                    const response = await fetch(`http://localhost:3000/api/people/${id}`, {
+                    const response = await fetch(`${API_URL}/api/people/${id}`, { // ✅ CORRECCIÓN 2
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -205,8 +283,8 @@
 
                     if (response.ok) {
                         alert('Persona actualizada con éxito.');
-                        editModal.classList.add('hidden'); // Ocultar modal
-                        fetchAndRenderPeople(); // Recargar la tabla
+                        editModal.classList.add('hidden');
+                        fetchAndRenderPeople();
                     } else {
                         throw new Error('No se pudo actualizar la información.');
                     }
@@ -216,13 +294,12 @@
                 }
             });
 
-            // Lógica para CANCELAR la edición
             cancelEditBtn.addEventListener('click', () => {
                 editModal.classList.add('hidden');
             });
             
             // --- LLAMADA INICIAL ---
-            // fetchAndRenderPeople(); // Esta llamada ya está en tu código
+            fetchAndRenderPeople();
         });
     </script>
 </body>

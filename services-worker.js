@@ -12,6 +12,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'START_TRACKING') {
         const { personId, token } = event.data.payload;
+        const API_URL = 'https://findme-app-backend.onrender.com';
         console.log(`Iniciando seguimiento para personId: ${personId}`);
 
         // Inicia el seguimiento de geolocalización en segundo plano
@@ -21,7 +22,7 @@ self.addEventListener('message', event => {
                 console.log('Ubicación obtenida en segundo plano:', latitude, longitude);
 
                 // Envía la ubicación al servidor
-                fetch('/api/location/update', {
+                fetch(`${API_URL}/api/location/update`, { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
