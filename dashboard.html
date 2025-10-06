@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
-
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -16,13 +15,10 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#13a4ec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101c22",
-                        "card-dark": "#1a2831",
-                        "border-dark": "#2a3c47",
+                        primary: "#13a4ec", "background-light": "#f6f7f8", "background-dark": "#101c22",
+                        "card-dark": "#1a2831", "border-dark": "#2a3c47",
                     },
-                    fontFamily: { display: ["Inter"], },
+                    fontFamily: { display: ["Inter"] },
                     borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
                 },
             },
@@ -30,33 +26,26 @@
     </script>
     <style> .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; } </style>
 </head>
-
 <body class="bg-background-light dark:bg-background-dark font-display">
     <div class="flex flex-col min-h-screen">
         <header class="bg-background-light dark:bg-background-dark sticky top-0 z-20 border-b border-primary/20 dark:border-border-dark">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2 text-primary">
-                            <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
-                            <h1 class="text-xl font-bold text-slate-800 dark:text-white">FindMe</h1>
-                        </div>
+                    <div class="flex items-center gap-2 text-primary">
+                        <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                        <h1 class="text-xl font-bold text-slate-800 dark:text-white">FindMe</h1>
                     </div>
                     <div class="flex items-center gap-4">
-                        <button class="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors"><span class="material-symbols-outlined"> notifications </span></button>
-                        
                         <div class="relative">
                             <button id="user-menu-button" class="w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
                                 <span class="material-symbols-outlined"> account_circle </span>
                             </button>
                             <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-card-dark rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-30">
                                 <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
-                                    <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Mi Perfil</a>
+                                    <a href="edit-profile.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Mi Perfil</a>
                                     <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Ajustes</a>
                                     <div class="border-t border-border-dark my-1"></div>
-                                    <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20">
-                                        Cerrar Sesión
-                                    </button>
+                                    <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20">Cerrar Sesión</button>
                                 </div>
                             </div>
                         </div>
@@ -91,26 +80,24 @@
 
     <div id="edit-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-lg border border-border-dark">
-            <div class="p-6 border-b border-border-dark">
-                <h3 class="text-xl font-bold text-white">Editar Información</h3>
-            </div>
+            <div class="p-6 border-b border-border-dark"> <h3 class="text-xl font-bold text-white">Editar Información</h3> </div>
             <form id="edit-form" class="p-6 space-y-4">
                 <input type="hidden" id="edit-person-id">
                 <div>
                     <label class="block text-sm font-medium text-slate-300" for="edit-full-name">Nombre Completo</label>
-                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-full-name" type="text" required />
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary" id="edit-full-name" type="text" required />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300" for="edit-contact-number">Teléfono de Contacto</label>
-                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-contact-number" type="tel" />
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary" id="edit-contact-number" type="tel" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300" for="edit-preferred-hospital">Hospital de Preferencia</label>
-                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-preferred-hospital" type="text" />
+                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary" id="edit-preferred-hospital" type="text" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300" for="edit-medical-conditions">Condiciones Médicas</label>
-                    <textarea class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary placeholder-slate-500" id="edit-medical-conditions" rows="3"></textarea>
+                    <textarea class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark text-white focus:ring-primary focus:border-primary" id="edit-medical-conditions" rows="3"></textarea>
                 </div>
                 <div class="flex justify-end gap-4 pt-4">
                     <button id="cancel-edit-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-border-dark text-white hover:bg-opacity-80">Cancelar</button>
@@ -120,13 +107,40 @@
         </div>
     </div>
 
+    <div id="logout-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-sm border border-border-dark">
+            <div class="p-6 text-center">
+                <h3 class="text-lg font-bold text-white mt-4">Cerrar Sesión</h3>
+                <p class="text-sm text-slate-400 mt-2">¿Estás seguro de que deseas cerrar sesión?</p>
+            </div>
+            <div class="bg-background-dark/50 px-6 py-4 flex justify-end gap-4">
+                <button id="cancel-logout-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-border-dark text-white hover:bg-opacity-80">Cancelar</button>
+                <button id="confirm-logout-btn" class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Elementos del DOM ---
-            const tableBody = document.getElementById('people-table-body');
             const API_URL = 'https://findme-app-backend.onrender.com';
             const token = localStorage.getItem('token');
-            // Elementos del Modal
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // --- Elementos del DOM ---
+            const tableBody = document.getElementById('people-table-body');
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+            
+            // --- Elementos del Modal Logout ---
+            const logoutBtn = document.getElementById('logout-btn');
+            const logoutModal = document.getElementById('logout-modal');
+            const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
+            const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
+
+            // --- Elementos del Modal Edición ---
             const editModal = document.getElementById('edit-modal');
             const editForm = document.getElementById('edit-form');
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
@@ -135,47 +149,41 @@
             const editContactNumber = document.getElementById('edit-contact-number');
             const editPreferredHospital = document.getElementById('edit-preferred-hospital');
             const editMedicalConditions = document.getElementById('edit-medical-conditions');
-            // Elementos del menú de usuario
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenu = document.getElementById('user-menu');
-            const logoutBtn = document.getElementById('logout-btn');
-
-            // --- Lógica de Autenticación y Menú ---
-            if (!token) {
-                window.location.href = 'index.html';
-                return;
-            }
             
+            // --- Lógica del Menú y Logout ---
             userMenuButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 userMenu.classList.toggle('hidden');
             });
-
             window.addEventListener('click', () => {
-                if (!userMenu.classList.contains('hidden')) {
-                    userMenu.classList.add('hidden');
-                }
+                if (!userMenu.classList.contains('hidden')) userMenu.classList.add('hidden');
             });
-
             logoutBtn.addEventListener('click', () => {
+                userMenu.classList.add('hidden');
+                logoutModal.classList.remove('hidden');
+            });
+            cancelLogoutBtn.addEventListener('click', () => logoutModal.classList.add('hidden'));
+            confirmLogoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('token');
                 window.location.href = 'index.html';
             });
 
             // --- Lógica para Cargar y Renderizar la Tabla ---
             function renderTable(people) {
-                tableBody.innerHTML = ''; // Limpiar la tabla antes de renderizar
+                tableBody.innerHTML = '';
                 if (people.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="2" class="text-center py-8 text-slate-500">No tienes personas a tu cargo. ¡Añade una!</td></tr>';
                     return;
                 }
                 people.forEach(person => {
                     const row = document.createElement('tr');
+                    // ✅ CORRECCIÓN: Se construye la URL de la imagen correctamente
+                    const imageUrl = person.image_url ? `${API_URL}${person.image_url}` : 'https://via.placeholder.com/150';
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <img class="h-10 w-10 rounded-full object-cover" src="${person.profile_image_url ? (API_URL + '/' + person.profile_image_url) : 'https://via.placeholder.com/150'}" alt="${person.full_name}">
+                                    <img class="h-10 w-10 rounded-full object-cover" src="${imageUrl}" alt="${person.full_name}">
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-base font-semibold text-slate-800 dark:text-white">${person.full_name}</div>
@@ -194,11 +202,9 @@
 
             async function fetchAndRenderPeople() {
                 try {
-                    const response = await fetch(`${API_URL}/api/people`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+                    const response = await fetch(`${API_URL}/api/people`, { headers: { 'Authorization': `Bearer ${token}` } });
                     if (!response.ok) {
-                        if (response.status === 401) { // Token inválido o expirado
+                        if (response.status === 401) {
                             localStorage.removeItem('token');
                             window.location.href = 'index.html';
                         }
@@ -221,42 +227,27 @@
                 if (button.classList.contains('delete-btn')) {
                     if (confirm('¿Estás seguro de que quieres eliminar a esta persona?')) {
                         try {
-                            const response = await fetch(`${API_URL}/api/people/${id}`, {
-                                method: 'DELETE',
-                                headers: { 'Authorization': `Bearer ${token}` }
-                            });
+                            const response = await fetch(`${API_URL}/api/people/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
                             if (!response.ok) throw new Error('No se pudo eliminar.');
-                            fetchAndRenderPeople(); // Recargar la tabla
-                        } catch (error) {
-                            alert(error.message);
-                        }
+                            fetchAndRenderPeople();
+                        } catch (error) { alert(error.message); }
                     }
                 }
 
                 if (button.classList.contains('edit-btn')) {
                     try {
-                        // 1. Pedir los datos de la persona al servidor
-                        const response = await fetch(`${API_URL}/api/people/${id}`, { // ✅ CORRECCIÓN 1
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
+                        const response = await fetch(`${API_URL}/api/people/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
                         if (!response.ok) throw new Error('No se pudo obtener la información.');
-                        
                         const person = await response.json();
                         
-                        // 2. Rellenar el formulario del modal
                         editPersonId.value = person.id;
                         editFullName.value = person.full_name || '';
                         editContactNumber.value = person.contact_number || '';
                         editPreferredHospital.value = person.preferred_hospital || '';
                         editMedicalConditions.value = person.medical_conditions || '';
 
-                        // 3. Mostrar el modal
                         editModal.classList.remove('hidden');
-
-                    } catch (error) {
-                        console.error('Error al abrir modal:', error);
-                        alert(error.message);
-                    }
+                    } catch (error) { alert(error.message); }
                 }
             });
 
@@ -272,31 +263,20 @@
                 };
 
                 try {
-                    const response = await fetch(`${API_URL}/api/people/${id}`, { // ✅ CORRECCIÓN 2
+                    const response = await fetch(`${API_URL}/api/people/${id}`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                         body: JSON.stringify(updatedData)
                     });
-
                     if (response.ok) {
                         alert('Persona actualizada con éxito.');
                         editModal.classList.add('hidden');
                         fetchAndRenderPeople();
-                    } else {
-                        throw new Error('No se pudo actualizar la información.');
-                    }
-                } catch (error) {
-                    console.error('Error al guardar cambios:', error);
-                    alert(error.message);
-                }
+                    } else { throw new Error('No se pudo actualizar la información.'); }
+                } catch (error) { alert(error.message); }
             });
 
-            cancelEditBtn.addEventListener('click', () => {
-                editModal.classList.add('hidden');
-            });
+            cancelEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
             
             // --- LLAMADA INICIAL ---
             fetchAndRenderPeople();

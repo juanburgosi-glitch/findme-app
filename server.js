@@ -199,14 +199,14 @@ app.get('/api/people', verifyToken, async (req, res) => {
 });
 
 app.get('/api/people/:id', verifyToken, async (req, res) => {
-    const { id } = req.params; // Obtenemos el ID de la URL
+    const { id } = req.params;
 
     try {
-        const query = 'SELECT * FROM people WHERE id = $1 AND user_id = $2 AND is_deleted = false';
+        const query = 'SELECT * FROM people WHERE id = $1 AND user_id = $2';
         const result = await pool.query(query, [id, req.userId]);
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Persona no encontrada o no pertenece a este usuario.' });
+            return res.status(404).json({ error: 'Persona no encontrada' });
         }
 
         res.json(result.rows[0]);
