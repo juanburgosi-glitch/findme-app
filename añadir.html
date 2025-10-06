@@ -42,9 +42,10 @@
 </head>
 
 <body class="font-display bg-background-dark text-foreground-dark">
-    <div class="flex flex-col min-h-screen pt-16"> <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col min-h-screen pt-16">
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="max-w-xl mx-auto">
-                <div class="bg-background-dark shadow-md rounded-lg p-6 md:p-8 border border-subtle-dark">
+                <div class="bg-card-dark shadow-md rounded-lg p-6 md:p-8 border border-border-dark">
                     <div class="flex items-center gap-4 mb-6">
                         <a href="dashboard.html" class="text-slate-400 hover:text-primary transition-colors">
                             <span class="material-symbols-outlined">arrow_back</span>
@@ -54,19 +55,19 @@
                     <form id="add-person-form" class="space-y-6">
                         <div>
                             <label class="block text-sm font-medium text-foreground-dark" for="full-name">Nombre Completo</label>
-                            <input class="mt-1 block w-full rounded-lg border-subtle-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="full-name" name="full-name" placeholder="Ej: Juan Pérez" type="text" required />
+                            <input class="mt-1 block w-full rounded-lg border-border-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="full-name" name="full-name" placeholder="Ej: Juan Pérez" type="text" required />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-foreground-dark" for="contact-number">Número de Contacto</label>
-                            <input class="mt-1 block w-full rounded-lg border-subtle-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="contact-number" name="contact-number" placeholder="Ej: +56 9 1234 5678" type="tel" />
+                            <input class="mt-1 block w-full rounded-lg border-border-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="contact-number" name="contact-number" placeholder="Ej: +56 9 1234 5678" type="tel" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-foreground-dark" for="preferred-hospital">Hospital de Preferencia</label>
-                            <input class="mt-1 block w-full rounded-lg border-subtle-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="preferred-hospital" name="preferred-hospital" placeholder="Ej: Hospital Clínico UC" type="text" />
+                            <input class="mt-1 block w-full rounded-lg border-border-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="preferred-hospital" name="preferred-hospital" placeholder="Ej: Hospital Clínico UC" type="text" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-foreground-dark" for="medical-conditions">Condiciones Médicas</label>
-                            <textarea class="mt-1 block w-full rounded-lg border-subtle-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="medical-conditions" name="medical-conditions" placeholder="Alergias, medicamentos, enfermedades crónicas, etc." rows="4"></textarea>
+                            <textarea class="mt-1 block w-full rounded-lg border-border-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="medical-conditions" name="medical-conditions" placeholder="Alergias, medicamentos, enfermedades crónicas, etc." rows="4"></textarea>
                         </div>
                         <div class="flex justify-end gap-4 pt-4">
                             <a href="dashboard.html" class="px-4 py-2 rounded-lg text-sm font-semibold bg-subtle-dark text-foreground-dark hover:bg-opacity-80">Cancelar</a>
@@ -76,7 +77,7 @@
                 </div>
             </div>
         </main>
-        <footer class="border-t border-subtle-dark mt-auto">
+        <footer class="border-t border-border-dark mt-auto">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-placeholder-dark">
                 © 2025 FindMe. Todos los derechos reservados.
             </div>
@@ -87,10 +88,9 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const addPersonForm = document.getElementById('add-person-form');
-        const API_URL = 'https://findme-app-backend.onrender.com'; // Tu URL de Render
+        const API_URL = 'https://findme-app-backend.onrender.com';
         const token = localStorage.getItem('token');
 
-        // Redirigir si no hay token
         if (!token) {
             window.location.href = 'index.html';
             return;
@@ -99,31 +99,22 @@
         addPersonForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            // 1. Crear un objeto FormData
-            // Este objeto es especial para enviar formularios que incluyen archivos.
             const formData = new FormData();
 
-            // 2. Añadir todos los campos del formulario al objeto FormData
+            // Añadir los campos del formulario al objeto FormData
             formData.append('fullName', document.getElementById('full-name').value);
             formData.append('contactNumber', document.getElementById('contact-number').value);
             formData.append('preferredHospital', document.getElementById('preferred-hospital').value);
             formData.append('medicalConditions', document.getElementById('medical-conditions').value);
             
-            // También añadimos el archivo de imagen. Si no se selecciona ninguno, no pasa nada.
-            const imageInput = document.getElementById('profile-image');
-            if (imageInput.files[0]) {
-                formData.append('profileImage', imageInput.files[0]);
-            }
-
+            // ✅ CORRECCIÓN: Hemos eliminado las líneas que buscaban un input de imagen inexistente.
+            
             try {
                 const response = await fetch(`${API_URL}/api/people`, {
                     method: 'POST',
                     headers: {
-                        // 3. ¡IMPORTANTE! NO especificamos 'Content-Type'. 
-                        // El navegador lo hará automáticamente por nosotros al usar FormData.
                         'Authorization': `Bearer ${token}`
                     },
-                    // 4. Enviamos el objeto FormData directamente en el body.
                     body: formData 
                 });
 
