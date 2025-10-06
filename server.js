@@ -213,13 +213,25 @@ app.get('/api/people/:id', verifyToken, async (req, res) => {
     }
 });
 
-app.post('/api/people', verifyToken, async (req, res) => {
-    const { fullName, contactNumber, preferredHospital, medicalConditions, imageUrl } = req.body;
+app.post('/api/people', verifyToken, upload, async (req, res) => {
+    // 1. Los campos de texto ahora están disponibles en req.body gracias a multer
+    const { fullName, contactNumber, preferredHospital, medicalConditions } = req.body;
+    
+    // 2. La información del archivo (si se subió) está en req.file
+    // Construimos la URL que se guardará en la base de datos
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
     if (!fullName) {
         return res.status(400).json({ error: 'El nombre completo es requerido' });
     }
+
     try {
-        const query = `INSERT INTO people (full_name, contact_number, preferred_hospital, medical_conditions, user_id, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`;
+        const query = `
+            INSERT INTO people (full_name, contact_number, preferred_hospital, medical_conditions, user_id, image_url) 
+            VALUES ($1, $2, $3, $4, $5, $6) 
+            RETURNING *;
+        `;
+        // 3. Pasamos la nueva variable imageUrl a la consulta
         const values = [fullName, contactNumber, preferredHospital, medicalConditions, req.userId, imageUrl];
         const result = await pool.query(query, values);
         res.status(201).json(result.rows[0]);
