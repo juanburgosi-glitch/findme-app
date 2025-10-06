@@ -85,8 +85,8 @@
     </div>
 
     <script src="main.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
         const addPersonForm = document.getElementById('add-person-form');
         const API_URL = 'https://findme-app-backend.onrender.com';
         const token = localStorage.getItem('token');
@@ -99,15 +99,22 @@
         addPersonForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            const formData = new FormData();
+            // Obtenemos el valor del nombre completo
+            const fullNameInput = document.getElementById('full-name');
+            const fullNameValue = fullNameInput.value.trim(); // .trim() elimina espacios en blanco al inicio y final
 
-            // Añadir los campos del formulario al objeto FormData
-            formData.append('fullName', document.getElementById('full-name').value);
+            // ✅ CORRECCIÓN: Verificamos que el nombre no esté vacío ANTES de enviar.
+            if (!fullNameValue) {
+                alert('Por favor, ingresa el nombre completo.');
+                fullNameInput.focus(); // Pone el cursor en el campo para que el usuario lo rellene.
+                return; // Detenemos la ejecución si el campo está vacío.
+            }
+
+            const formData = new FormData();
+            formData.append('fullName', fullNameValue); // Usamos el valor verificado
             formData.append('contactNumber', document.getElementById('contact-number').value);
             formData.append('preferredHospital', document.getElementById('preferred-hospital').value);
             formData.append('medicalConditions', document.getElementById('medical-conditions').value);
-            
-            // ✅ CORRECCIÓN: Hemos eliminado las líneas que buscaban un input de imagen inexistente.
             
             try {
                 const response = await fetch(`${API_URL}/api/people`, {
@@ -130,7 +137,7 @@
                 alert('No se pudo conectar con el servidor.');
             }
         });
-    });
-    </script>
+        });
+        </script>
 </body>
 </html>
