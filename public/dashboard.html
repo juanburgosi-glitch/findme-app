@@ -125,13 +125,17 @@
     <script src="main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // ================== CONFIGURACIÓN ==================
+            const API_URL = 'https://findme-app-backend.onrender.com';
             const token = localStorage.getItem('token');
+
             if (!token) {
                 alert('Debes iniciar sesión para ver esta página.');
                 window.location.href = 'index.html';
                 return;
             }
 
+            // ================== ELEMENTOS DEL DOM ==================
             const tableBody = document.getElementById('people-table-body');
             
             const editModal = document.getElementById('edit-modal');
@@ -144,7 +148,6 @@
             const editContactNumber = document.getElementById('edit-contact-number');
             const editPreferredHospital = document.getElementById('edit-preferred-hospital');
             const editMedicalConditions = document.getElementById('edit-medical-conditions');
-            let currentImageUrl = null;
 
             const deleteModal = document.getElementById('delete-modal');
             const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
@@ -158,6 +161,8 @@
             let lastDeletedId = null;
             let undoTimeout;
 
+            // ================== FUNCIONES PRINCIPALES ==================
+
             function renderTable(peopleData) {
                 tableBody.innerHTML = '';
                 if (!peopleData || peopleData.length === 0) {
@@ -165,10 +170,9 @@
                     return;
                 }
                 peopleData.forEach(person => {
-                    const defaultIcon = `<div class="h-10 w-10 rounded-full bg-border-dark flex items-center justify-center text-primary"><span class="material-symbols-outlined !text-2xl">person</span></div>`;
-                    const personImage = person.image_url 
-                        ? `<img src="${person.image_url}" alt="${person.full_name}" class="h-10 w-10 rounded-full object-cover">` 
-                        : defaultIcon;
+                    // ✅ CORRECCIÓN: Construye la URL completa de la imagen
+                    const imageUrl = person.profile_image_url ? `${API_URL}/${person.profile_image_url}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(person.full_name)}&background=1a2831&color=13a4ec`;
+                    const personImage = `<img src="${imageUrl}" alt="${person.full_name}" class="h-10 w-10 rounded-full object-cover">`;
 
                     const row = `
                         <tr class="hover:bg-primary/5 dark:hover:bg-background-dark transition-colors">
@@ -177,7 +181,6 @@
                                     ${personImage}
                                     <div>
                                         <div class="person-name text-sm font-medium text-slate-800 dark:text-slate-100">${person.full_name}</div>
-                                        <div class="text-xs text-slate-500 dark:text-slate-400">${person.title || 'Sin descripción'}</div>
                                     </div>
                                 </div>
                             </td>
@@ -189,13 +192,14 @@
                                 </div>
                             </td>
                         </tr>`;
-                    tableBody.innerHTML += row;
+                    tableBody.insertAdjacentHTML('beforeend', row);
                 });
             }
 
             async function fetchAndRenderPeople() {
                 try {
-                    const response = await fetch('/api/people', { headers: { 'Authorization': `Bearer ${token}` } });
+                    // ✅ CORRECCIÓN: Usa la variable API_URL
+                    const response = await fetch(`${API_URL}/api/people`, { headers: { 'Authorization': `Bearer ${token}` } });
                     if (!response.ok) throw new Error('Error del servidor');
                     const people = await response.json();
                     renderTable(people);
@@ -205,6 +209,8 @@
                 }
             }
             
+            // ================== MANEJO DE EVENTOS ==================
+
             tableBody.addEventListener('click', async (event) => {
                 const button = event.target.closest('button');
                 if (!button) return;
@@ -219,18 +225,19 @@
 
                 if (button.classList.contains('edit-btn')) {
                     try {
-                        const response = await fetch(`/api/people/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        // ✅ CORRECCIÓN: Usa la variable API_URL
+                        const response = await fetch(`${API_URL}/api/people/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
                         if (!response.ok) throw new Error('No se pudo obtener la información de la persona.');
                         const person = await response.json();
                         
                         editPersonId.value = person.id;
-                        currentImageUrl = person.image_url;
-                        editImagePreview.src = person.image_url || 'https://via.placeholder.com/150';
+                        const imageUrl = person.profile_image_url ? `${API_URL}/${person.profile_image_url}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(person.full_name)}&background=1a2831&color=13a4ec`;
+                        editImagePreview.src = imageUrl;
                         editFullName.value = person.full_name || '';
                         editContactNumber.value = person.contact_number || '';
                         editPreferredHospital.value = person.preferred_hospital || '';
                         editMedicalConditions.value = person.medical_conditions || '';
-                        editImageUpload.value = '';
+                        editImageUpload.value = ''; // Limpiar el input de archivo
 
                         editModal.classList.remove('hidden');
                     } catch (error) {
@@ -246,52 +253,42 @@
                 }
             });
 
+            // ✅ CORRECCIÓN TOTAL: Lógica para enviar el formulario de edición
             editForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
-                let imageUrl = currentImageUrl;
-                const file = editImageUpload.files[0];
-
-                if (file) {
-                    const formData = new FormData();
-                    formData.append('profileImage', file);
-                    try {
-                        const uploadResponse = await fetch('/api/upload', {
-                            method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
-                        });
-                        if (uploadResponse.status === 401 || uploadResponse.status === 403) {
-                            alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
-                            window.location.href = 'index.html';
-                            return;
-                        }
-                        const uploadResult = await uploadResponse.json();
-                        if (!uploadResponse.ok) {
-                            throw new Error(uploadResult.error || 'Error al subir la nueva imagen.');
-                        }
-                        imageUrl = uploadResult.filePath;
-                    } catch (error) {
-                        alert(`Error en la subida: ${error.message}`);
-                        return;
-                    }
-                }
                 
-                const updatedData = {
-                    fullName: editFullName.value, contactNumber: editContactNumber.value,
-                    preferredHospital: editPreferredHospital.value, medicalConditions: editMedicalConditions.value,
-                    imageUrl: imageUrl
-                };
+                const id = editPersonId.value;
+                
+                const formData = new FormData();
+                formData.append('fullName', editFullName.value);
+                formData.append('contactNumber', editContactNumber.value);
+                formData.append('preferredHospital', editPreferredHospital.value);
+                formData.append('medicalConditions', editMedicalConditions.value);
+                
+                // Si el usuario seleccionó una nueva imagen, la añadimos.
+                if (editImageUpload.files[0]) {
+                    formData.append('profileImage', editImageUpload.files[0]);
+                }
 
                 try {
-                    const response = await fetch(`/api/people/${editPersonId.value}`, {
-                        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify(updatedData)
+                    const response = await fetch(`${API_URL}/api/people/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            // Sin 'Content-Type', el navegador la pone automáticamente para FormData
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
                     });
+                    
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(errorData.error || 'No se pudo actualizar la información.');
                     }
+                    
                     alert('Persona actualizada con éxito.');
                     editModal.classList.add('hidden');
                     fetchAndRenderPeople();
+
                 } catch (error) {
                     alert(`Error al guardar: ${error.message}`);
                 }
@@ -304,16 +301,14 @@
                 const id = deletePersonId.value;
                 const name = deletePersonName.textContent;
                 try {
-                    const response = await fetch(`/api/people/${id}`, { 
+                    // ✅ CORRECCIÓN: Usa la variable API_URL
+                    const response = await fetch(`${API_URL}/api/people/${id}`, { 
                         method: 'DELETE', 
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     
-                    // ===== CORRECCIÓN AQUÍ =====
-                    const result = await response.json(); // Leemos la respuesta como JSON
-                    
+                    const result = await response.json(); 
                     if (!response.ok) {
-                        // Si hay un error, usamos el mensaje del servidor
                         throw new Error(result.error || 'Error al eliminar el registro.');
                     }
                     
@@ -344,7 +339,8 @@
                 if (undoTimeout) clearTimeout(undoTimeout);
 
                 try {
-                    const response = await fetch(`/api/people/${lastDeletedId}/revert`, {
+                    // ✅ CORRECCIÓN: Usa la variable API_URL
+                    const response = await fetch(`${API_URL}/api/people/${lastDeletedId}/revert`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -362,6 +358,7 @@
                 }
             });
 
+            // ================== INICIO ==================
             fetchAndRenderPeople();
         });
     </script>
