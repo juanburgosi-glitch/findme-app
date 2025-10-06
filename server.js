@@ -199,16 +199,19 @@ app.get('/api/people', verifyToken, async (req, res) => {
 });
 
 app.get('/api/people/:id', verifyToken, async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; // Obtenemos el ID de la URL
+
     try {
-        const query = 'SELECT * FROM people WHERE id = $1 AND user_id = $2';
+        const query = 'SELECT * FROM people WHERE id = $1 AND user_id = $2 AND is_deleted = false';
         const result = await pool.query(query, [id, req.userId]);
+
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Persona no encontrada o no tienes permiso para verla.' });
+            return res.status(404).json({ error: 'Persona no encontrada o no pertenece a este usuario.' });
         }
+
         res.json(result.rows[0]);
     } catch (error) {
-        console.error('Error obteniendo persona:', error);
+        console.error('Error al obtener la persona:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });

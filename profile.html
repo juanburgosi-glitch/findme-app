@@ -230,10 +230,8 @@
                     medicalConditions: elements.inputMedicalConditions.value
                 };
                 try {
-                    const response = await fetch(`/api/people/${personId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify(updatedData)
+                    const response = await fetch(`${API_URL}/api/people/${personId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
