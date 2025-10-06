@@ -17,21 +17,14 @@
                 extend: {
                     colors: { 
                         "primary": "#13a4ec", 
-                        "background-light": "#f6f7f8", 
                         "background-dark": "#101c22", 
-                        "foreground-light": "#1f2937", 
                         "foreground-dark": "#f9fafb", 
-                        "subtle-light": "#e5e7eb", 
                         "subtle-dark": "#374151", 
-                        "input-light": "#ffffff", 
                         "input-dark": "#1f2937", 
-                        "placeholder-light": "#6b7280", 
                         "placeholder-dark": "#9ca3af",
                         "card-dark": "#1a2831",
                         "border-dark": "#2a3c47"
                     },
-                    fontFamily: { "display": ["Inter", "sans-serif"] },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
                 },
             },
         }
@@ -53,6 +46,15 @@
                         <h2 class="text-2xl md:text-3xl font-bold text-foreground-dark">Añadir Nueva Persona</h2>
                     </div>
                     <form id="add-person-form" class="space-y-6">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300">Foto de Perfil (Opcional)</label>
+                            <div class="mt-2 flex items-center gap-4">
+                                <img id="image-preview" class="h-16 w-16 rounded-full object-cover bg-border-dark" src="https://ui-avatars.com/api/?name=?&background=1a2831&color=13a4ec" alt="Vista previa">
+                                <input type="file" id="profile-image" name="profileImage" accept="image/*" class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"/>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-foreground-dark" for="full-name">Nombre Completo</label>
                             <input class="mt-1 block w-full rounded-lg border-border-dark bg-input-dark text-foreground-dark focus:ring-primary focus:border-primary placeholder-placeholder-dark" id="full-name" name="full-name" placeholder="Ej: Juan Pérez" type="text" required />
@@ -77,17 +79,13 @@
                 </div>
             </div>
         </main>
-        <footer class="border-t border-border-dark mt-auto">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-placeholder-dark">
-                © 2025 FindMe. Todos los derechos reservados.
-            </div>
-        </footer>
     </div>
 
-    <script src="main.js"></script>
-        <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
         const addPersonForm = document.getElementById('add-person-form');
+        const imageInput = document.getElementById('profile-image');
+        const imagePreview = document.getElementById('image-preview');
         const API_URL = 'https://findme-app-backend.onrender.com';
         const token = localStorage.getItem('token');
 
@@ -96,26 +94,34 @@
             return;
         }
 
+        // Para mostrar la vista previa de la imagen seleccionada
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                imagePreview.src = URL.createObjectURL(file);
+            }
+        });
+
         addPersonForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            // Obtenemos el valor del nombre completo
-            const fullNameInput = document.getElementById('full-name');
-            const fullNameValue = fullNameInput.value.trim(); // .trim() elimina espacios en blanco al inicio y final
-
-            // ✅ CORRECCIÓN: Verificamos que el nombre no esté vacío ANTES de enviar.
-            if (!fullNameValue) {
+            const fullName = document.getElementById('full-name').value.trim();
+            if (!fullName) {
                 alert('Por favor, ingresa el nombre completo.');
-                fullNameInput.focus(); // Pone el cursor en el campo para que el usuario lo rellene.
-                return; // Detenemos la ejecución si el campo está vacío.
+                return;
             }
 
             const formData = new FormData();
-            formData.append('fullName', fullNameValue); // Usamos el valor verificado
+            formData.append('fullName', fullName);
             formData.append('contactNumber', document.getElementById('contact-number').value);
             formData.append('preferredHospital', document.getElementById('preferred-hospital').value);
             formData.append('medicalConditions', document.getElementById('medical-conditions').value);
             
+            // Añadimos el archivo de imagen solo si el usuario ha seleccionado uno
+            if (imageInput.files[0]) {
+                formData.append('profileImage', imageInput.files[0]);
+            }
+
             try {
                 const response = await fetch(`${API_URL}/api/people`, {
                     method: 'POST',
@@ -137,7 +143,7 @@
                 alert('No se pudo conectar con el servidor.');
             }
         });
-        });
-        </script>
+    });
+    </script>
 </body>
 </html>
