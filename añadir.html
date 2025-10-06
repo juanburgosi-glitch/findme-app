@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html class="dark" lang="es">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>FindMe - Add Person</title>
+    <title>FindMe - Añadir Persona</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -48,7 +48,7 @@
                     <form id="add-person-form" class="space-y-6">
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-300">Foto de Perfil (Opcional)</label>
+                            <label class="block text-sm font-medium text-slate-300">Foto de Perfil</label>
                             <div class="mt-2 flex items-center gap-4">
                                 <img id="image-preview" class="h-16 w-16 rounded-full object-cover bg-border-dark" src="https://ui-avatars.com/api/?name=?&background=1a2831&color=13a4ec" alt="Vista previa">
                                 <input type="file" id="profile-image" name="profileImage" accept="image/*" class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"/>
@@ -94,7 +94,6 @@
             return;
         }
 
-        // Para mostrar la vista previa de la imagen seleccionada
         imageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -117,7 +116,6 @@
             formData.append('preferredHospital', document.getElementById('preferred-hospital').value);
             formData.append('medicalConditions', document.getElementById('medical-conditions').value);
             
-            // Añadimos el archivo de imagen solo si el usuario ha seleccionado uno
             if (imageInput.files[0]) {
                 formData.append('profileImage', imageInput.files[0]);
             }
@@ -125,9 +123,7 @@
             try {
                 const response = await fetch(`${API_URL}/api/people`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData 
                 });
 
