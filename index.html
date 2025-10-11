@@ -1,65 +1,48 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
-    <title>FindMe</title>
-
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title data-translate-key="login-title">FindMe - Iniciar Sesión</title>
     <link rel="icon" type="image/png" href="public/images/favicon.png" />
-
     <link href="public/css/styles.css" rel="stylesheet" />
-    
-    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
+    <script src="public/js/translator.js"></script>
 </head>
-
 <body class="bg-background-dark font-display text-gray-300">
     <div class="flex flex-col min-h-screen">
         <header class="flex items-center justify-between p-6 border-b border-border-dark">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 text-primary">
-                    <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path>
-                    </svg>
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
                 </div>
-                <h1 class="text-xl font-bold text-white">FindMe</h1>
+                <h1 class="text-xl font-bold text-white" data-translate-key="findme-title">FindMe</h1>
             </div>
         </header>
-        <main class="flex flex-1 items-center justify-center p-4 sm:p-6 lg:p-8">
+        <main class="flex flex-1 items-center justify-center p-4">
             <div class="w-full max-w-md space-y-8">
                 <div class="text-center">
-                    <h2 id="welcome-heading" class="text-3xl font-extrabold text-white">Bienvenido de nuevo</h2>
-                    <p id="login-prompt" class="mt-2 text-sm text-gray-400">Inicia sesión para acceder a tu panel.</p>
+                    <h2 class="text-3xl font-extrabold text-white" data-translate-key="login-welcome">Bienvenido de nuevo</h2>
+                    <p class="mt-2 text-sm text-gray-400" data-translate-key="login-prompt">Inicia sesión para acceder a tu panel.</p>
                 </div>
-                <form id="login-form" class="mt-8 space-y-6 bg-card-dark p-8 rounded-xl shadow-sm border border-border-dark">
-                    <div class="space-y-4 rounded-md">
-                        <div>
-                            <label class="sr-only" for="email-address">Correo electrónico</label>
-                            <input autocomplete="email" class="relative block w-full px-3 py-3 border-border-dark bg-background-dark text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm" id="email-address" name="email" placeholder="Correo electrónico" required="" type="email" />
-                        </div>
-                        <div>
-                            <label class="sr-only" for="password">Contraseña</label>
-                            <input autocomplete="current-password" class="relative block w-full px-3 py-3 border-border-dark bg-background-dark text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm" id="password" name="password" placeholder="Contraseña" required="" type="password" />
-                        </div>
+                <form id="login-form" class="mt-8 space-y-6 bg-card-dark p-8 rounded-xl border border-border-dark">
+                    <div class="space-y-4">
+                        <input id="email-address" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-3 border-border-dark bg-background-dark text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm" data-translate-key="email-placeholder" data-translate-property="placeholder">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="relative block w-full px-3 py-3 border-border-dark bg-background-dark text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm" data-translate-key="password-placeholder" data-translate-property="placeholder">
                     </div>
-                    <div>
-                        <button id="login-button" class="group relative flex w-full justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="submit">
-                            Iniciar Sesión
-                        </button>
-                    </div>
+                    <button type="submit" class="group relative flex w-full justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" data-translate-key="login-button">Iniciar Sesión</button>
                     <div class="text-center text-sm">
                         <p class="text-gray-400">
-                            <span id="no-account-text">¿No tienes una cuenta? </span>
-                            <a id="signup-link" class="font-medium text-primary hover:text-primary/80" href="registro.html">Registrarme</a>
+                            <span data-translate-key="no-account-text">¿No tienes una cuenta? </span>
+                            <a href="registro.html" class="font-medium text-primary hover:text-primary/80" data-translate-key="signup-link">Registrarme</a>
                         </p>
                     </div>
                 </form>
             </div>
         </main>
     </div>
-
-    <div id="toast-notification" class="hidden fixed top-5 right-5 flex items-center gap-4 text-white px-5 py-3 rounded-lg shadow-lg transition-all duration-300">
+    <div id="toast-notification" class="hidden fixed top-5 right-5 flex items-center gap-4 text-white px-5 py-3 rounded-lg shadow-lg">
         <span id="toast-icon" class="material-symbols-outlined"></span>
         <span id="toast-message"></span>
     </div>
