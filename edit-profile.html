@@ -40,6 +40,18 @@
                     <div class="bg-card-dark p-6 sm:p-8 rounded-xl shadow-md border border-border-dark">
                         <h3 class="text-xl font-semibold mb-6 text-white">Información Personal</h3>
                         <div class="space-y-6">
+                            <!-- Agregar campo de imagen -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Foto de Perfil</label>
+                                <div class="mt-2 flex items-center gap-4">
+                                    <img id="profile-preview" class="h-16 w-16 rounded-full object-cover bg-border-dark" 
+                                         src="https://ui-avatars.com/api/?background=1a2831&color=13a4ec" alt="Vista previa">
+                                    <input type="file" id="profile-image" name="profileImage" accept="image/*" 
+                                           class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 
+                                                  file:text-sm file:font-semibold file:bg-primary/10 file:text-primary 
+                                                  hover:file:bg-primary/20 cursor-pointer"/>
+                                </div>
+                            </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300" for="first-name">Primer Nombre</label>
@@ -99,6 +111,16 @@
             const secondLastNameInput = document.getElementById('second-last-name');
             const contactNumberInput = document.getElementById('contact-number');
             const emailInput = document.getElementById('email');
+            const profileImageInput = document.getElementById('profile-image');
+            const profilePreview = document.getElementById('profile-preview');
+
+            // Agregar preview de imagen
+            profileImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    profilePreview.src = URL.createObjectURL(file);
+                }
+            });
 
             async function loadProfile() {
                 try {
@@ -109,6 +131,11 @@
                     if (!response.ok) throw new Error('No se pudieron cargar los datos del perfil.');
                     
                     const profile = await response.json();
+                    
+                    // Actualizar preview si existe imagen
+                    if (profile.profile_image_url) {
+                        profilePreview.src = `${API_URL}${profile.profile_image_url}`;
+                    }
                     
                     firstNameInput.value = profile.first_name || '';
                     middleNameInput.value = profile.middle_name || '';
@@ -126,23 +153,25 @@
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
-                const updatedData = {
-                    firstName: firstNameInput.value,
-                    middleName: middleNameInput.value,
-                    lastName: lastNameInput.value,
-                    secondLastName: secondLastNameInput.value,
-                    contactNumber: contactNumberInput.value
-                };
+                const formData = new FormData();
+                formData.append('firstName', firstNameInput.value);
+                formData.append('middleName', middleNameInput.value);
+                formData.append('lastName', lastNameInput.value);
+                formData.append('secondLastName', secondLastNameInput.value);
+                formData.append('contactNumber', contactNumberInput.value);
+
+                if (profileImageInput.files[0]) {
+                    formData.append('profileImage', profileImageInput.files[0]);
+                }
 
                 try {
                     // ✅ 4. USAMOS LA DIRECCIÓN CORRECTA TAMBIÉN AL GUARDAR
                     const response = await fetch(`${API_URL}/api/user/profile`, {
                         method: 'PUT',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify(updatedData)
+                        body: formData
                     });
 
                     const result = await response.json();

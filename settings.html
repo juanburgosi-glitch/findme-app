@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FindMe - Ajustes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#13a4ec",
+                        "background-dark": "#101c22",
+                        "card-dark": "#1a2831",
+                        "border-dark": "#2a3c47",
+                    },
+                    fontFamily: { display: ["Inter"] },
+                },
+            },
+        };
+    </script>
+</head>
+
+<body class="bg-background-dark font-display text-gray-300">
+    <header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <a href="dashboard.html" class="text-primary hover:text-primary/90">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <h1 class="text-xl font-bold text-white">Ajustes</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="space-y-6">
+                <!-- Tema -->
+                <div class="bg-card-dark rounded-xl p-6 border border-border-dark">
+                    <h3 class="text-lg font-semibold text-white mb-4">Apariencia</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span>Tema Oscuro</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-border-dark peer-focus:outline-none rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notificaciones -->
+                <div class="bg-card-dark rounded-xl p-6 border border-border-dark">
+                    <h3 class="text-lg font-semibold text-white mb-4">Notificaciones</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="block">Actualizaciones de ubicación</span>
+                                <span class="text-sm text-gray-400">Recibir alertas cuando se actualice la ubicación</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="location-notifications" class="sr-only peer">
+                                <div class="w-11 h-6 bg-border-dark peer-focus:outline-none rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacidad -->
+                <div class="bg-card-dark rounded-xl p-6 border border-border-dark">
+                    <h3 class="text-lg font-semibold text-white mb-4">Privacidad</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="block">Compartir ubicación</span>
+                                <span class="text-sm text-gray-400">Permitir que otros vean mi ubicación</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="share-location" class="sr-only peer">
+                                <div class="w-11 h-6 bg-border-dark peer-focus:outline-none rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const locationNotifications = document.getElementById('location-notifications');
+            const shareLocation = document.getElementById('share-location');
+
+            // Cargar preferencias guardadas
+            const settings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
+            darkModeToggle.checked = settings.darkMode ?? true;
+            locationNotifications.checked = settings.locationNotifications ?? false;
+            shareLocation.checked = settings.shareLocation ?? false;
+
+            // Aplicar tema inicial
+            document.documentElement.classList.toggle('dark', darkModeToggle.checked);
+
+            // Guardar cambios
+            function saveSettings() {
+                const settings = {
+                    darkMode: darkModeToggle.checked,
+                    locationNotifications: locationNotifications.checked,
+                    shareLocation: shareLocation.checked
+                };
+                localStorage.setItem('findme-settings', JSON.stringify(settings));
+            }
+
+            // Event listeners
+            darkModeToggle.addEventListener('change', () => {
+                document.documentElement.classList.toggle('dark', darkModeToggle.checked);
+                saveSettings();
+            });
+
+            locationNotifications.addEventListener('change', saveSettings);
+            shareLocation.addEventListener('change', saveSettings);
+
+            // Solicitar permisos de notificación si está activado
+            locationNotifications.addEventListener('change', async (e) => {
+                if (e.target.checked && Notification.permission !== 'granted') {
+                    const permission = await Notification.requestPermission();
+                    if (permission !== 'granted') {
+                        e.target.checked = false;
+                        alert('Se requieren permisos de notificación para esta función.');
+                    }
+                }
+                saveSettings();
+            });
+        });
+    </script>
+</body>
+</html>
