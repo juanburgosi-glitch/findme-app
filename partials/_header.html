@@ -1,0 +1,23 @@
+<header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <a href="dashboard.html" class="flex items-center gap-2 text-primary">
+                <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                <h1 class="text-xl font-bold text-white">FindMe</h1>
+            </a>
+            <div class="relative">
+                <button id="user-menu-button" class="w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
+                    <span class="material-symbols-outlined"> account_circle </span>
+                </button>
+                <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-card-dark rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-30">
+                    <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+                        <a href="edit-profile.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Mi Perfil</a>
+                        <a href="settings.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Ajustes</a>
+                        <div class="border-t border-border-dark my-1"></div>
+                        <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20">Cerrar Sesión</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

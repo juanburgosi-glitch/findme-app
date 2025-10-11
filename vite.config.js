@@ -6,7 +6,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [
     htmlPartials({
-      // Define la carpeta donde están tus "partes" de HTML
+      // This tells Vite to look for partials in the 'partials' folder
       partials: path.resolve(__dirname, './partials')
     })
   ],
