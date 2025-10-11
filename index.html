@@ -13,19 +13,15 @@
     </style>
     <!-- Actualizar base href para GitHub Pages -->
     <base href="/findme-app/">
-    <script>
-        // ...existing code...
-    </script>
+    <title>FindMe - Iniciar Sesión</title>
 </head>
 <body class="bg-card font-display text-foreground">
     <!-- Contenido de la aplicación -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('login-form');
-            const BASE_URL = '/findme-app';
-            // Actualizar la URL base para GitHub Pages
             const API_URL = 'https://findme-app-backend.onrender.com';
-            
+            const form = document.getElementById('login-form');
+
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const formData = new FormData(form);
@@ -40,9 +36,8 @@
                 });
                 
                 if (response.ok) {
-                    const data = await response.json();
                     localStorage.setItem('token', data.token);
-                    window.location.href = `${BASE_URL}/dashboard.html`;
+                    window.location.href = 'dashboard.html';
                 } else {
                     // Manejar errores de autenticación
                     const errorData = await response.json();
