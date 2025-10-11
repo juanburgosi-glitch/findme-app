@@ -4,31 +4,16 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>FindMe - Ajustes</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <link href="public/css/styles.css" rel="stylesheet" />
+
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#13a4ec",
-                        "background-dark": "#101c22",
-                        "card-dark": "#1a2831",
-                        "border-dark": "#2a3c47",
-                    },
-                    fontFamily: { display: ["Inter"] },
-                },
-            },
-        };
-    </script>
 </head>
 
 <body class="bg-background-dark font-display text-gray-300">
-    <!-- Header con breadcrumbs -->
     <header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center h-16 gap-4">
@@ -45,7 +30,6 @@
     </header>
 
     <div class="flex">
-        <!-- Navegación lateral -->
         <aside class="w-64 border-r border-border-dark h-[calc(100vh-4rem)] sticky top-16 flex-shrink-0">
             <nav class="p-4 space-y-1">
                 <a href="#general" class="flex items-center gap-3 px-4 py-2.5 text-white bg-primary/10 rounded-lg">
@@ -67,10 +51,8 @@
             </nav>
         </aside>
 
-        <!-- Contenido principal -->
         <main class="flex-1 p-6">
             <div class="max-w-3xl mx-auto space-y-8">
-                <!-- General -->
                 <section id="general" class="space-y-6">
                     <h2 class="text-2xl font-semibold text-white">Ajustes generales</h2>
                     <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
@@ -87,7 +69,6 @@
                     </div>
                 </section>
 
-                <!-- Apariencia -->
                 <section id="apariencia" class="space-y-6">
                     <h2 class="text-2xl font-semibold text-white">Apariencia</h2>
                     <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
@@ -116,7 +97,6 @@
                     </div>
                 </section>
 
-                <!-- Notificaciones -->
                 <section id="notificaciones" class="space-y-6">
                     <h2 class="text-2xl font-semibold text-white">Notificaciones</h2>
                     <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
@@ -143,7 +123,6 @@
                     </div>
                 </section>
 
-                <!-- Privacidad -->
                 <section id="privacidad" class="space-y-6">
                     <h2 class="text-2xl font-semibold text-white">Privacidad</h2>
                     <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
@@ -173,7 +152,7 @@
         </main>
     </div>
 
-    <script src="/js/settings.js"></script>
+    <script src="public/js/settings.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const settingsManager = new SettingsManager();
