@@ -1,3 +1,58 @@
+const translations = {
+    es: {
+        'settings-title': 'Ajustes',
+        'general-header': 'Ajustes generales',
+        'language-label': 'Idioma',
+        'language-desc': 'Selecciona el idioma de la aplicación',
+        'appearance-header': 'Apariencia',
+        'theme-label': 'Tema',
+        'theme-desc': 'Personaliza la apariencia de FindMe',
+        'dark-theme': 'Oscuro',
+        'light-theme': 'Claro',
+        'system-theme': 'Sistema',
+        'notifications-header': 'Notificaciones',
+        'location-updates-label': 'Actualizaciones de ubicación',
+        'location-updates-desc': 'Recibe notificaciones cuando se actualice la ubicación',
+        'sounds-label': 'Sonidos',
+        'sounds-desc': 'Reproducir sonidos con las notificaciones',
+        'privacy-header': 'Privacidad',
+        'share-location-label': 'Compartir ubicación',
+        'share-location-desc': 'Permitir que otros vean mi ubicación',
+        'location-history-label': 'Historial de ubicación',
+        'location-history-desc': 'Guardar historial de ubicaciones',
+        'sidebar-general': 'General',
+        'sidebar-appearance': 'Apariencia',
+        'sidebar-notifications': 'Notificaciones',
+        'sidebar-privacy': 'Privacidad'
+    },
+    en: {
+        'settings-title': 'Settings',
+        'general-header': 'General Settings',
+        'language-label': 'Language',
+        'language-desc': 'Select the application language',
+        'appearance-header': 'Appearance',
+        'theme-label': 'Theme',
+        'theme-desc': 'Customize the look and feel of FindMe',
+        'dark-theme': 'Dark',
+        'light-theme': 'Light',
+        'system-theme': 'System',
+        'notifications-header': 'Notifications',
+        'location-updates-label': 'Location Updates',
+        'location-updates-desc': 'Receive notifications when location is updated',
+        'sounds-label': 'Sounds',
+        'sounds-desc': 'Play sounds with notifications',
+        'privacy-header': 'Privacy',
+        'share-location-label': 'Share Location',
+        'share-location-desc': 'Allow others to see my location',
+        'location-history-label': 'Location History',
+        'location-history-desc': 'Save location history',
+        'sidebar-general': 'General',
+        'sidebar-appearance': 'Appearance',
+        'sidebar-notifications': 'Notifications',
+        'sidebar-privacy': 'Privacy'
+    }
+};
+
 class SettingsManager {
     constructor() {
         this.settings = this.loadSettings();
@@ -27,17 +82,42 @@ class SettingsManager {
         this.applySettings();
     }
 
-    applySettings() {
-        document.documentElement.lang = this.settings.language;
-        this.applyTheme();
-        window.dispatchEvent(new Event('settings-changed'));
+    applyLanguage() {
+        const lang = this.settings.language;
+        document.querySelectorAll('[data-translate-key]').forEach(element => {
+            const key = element.getAttribute('data-translate-key');
+            if (translations[lang] && translations[lang][key]) {
+                element.textContent = translations[lang][key];
+            }
+        });
+        document.title = translations[lang]['settings-title'] || 'FindMe - Ajustes';
     }
+
+    applySettings() {
+            document.documentElement.lang = this.settings.language;
+            this.applyTheme();
+            this.applyLanguage(); // ✅ 3. Llama a la nueva función aquí
+            window.dispatchEvent(new Event('settings-changed'));
+        }
 
     applyTheme() {
         const theme = this.settings.theme === 'system'
             ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
             : this.settings.theme;
-        document.documentElement.classList.toggle('dark', theme === 'dark');
+
+        // Forzar la eliminación de ambas clases antes de aplicar la correcta
+        document.documentElement.classList.remove('dark', 'light');
+        document.body.classList.remove('bg-background-dark', 'bg-background-light');
+
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.body.classList.add('bg-background-dark');
+        } else {
+            // Asumimos que quieres un fondo claro en modo 'light'
+            document.documentElement.classList.add('light');
+            // Nota: Debes definir 'bg-background-light' en tu CSS si aún no lo has hecho.
+            document.body.classList.add('bg-background-light'); 
+        }
     }
 
     setupEventListeners() {
