@@ -3,7 +3,8 @@ class SettingsManager {
         this.settings = this.loadSettings();
         this.applySettings(); // Aplicar ajustes iniciales al cargar
         this.setupEventListeners();
-        this.notificationSound = new Audio('/public/sounds/notification.mp3'); // Corregir ruta del sonido
+        // Ruta corregida para el archivo de sonido
+        this.notificationSound = new Audio('public/sounds/notification.mp3'); 
     }
 
     loadSettings() {
@@ -21,10 +22,11 @@ class SettingsManager {
             }
         };
 
-        // Cargar las configuraciones guardadas
+        // Cargar las configuraciones guardadas del navegador
         const storedSettings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
 
-        // Combinar los valores por defecto con los guardados, asegurando que todas las claves existan
+        // ✅ Lógica mejorada: Combinar los valores por defecto con los guardados
+        // Esto asegura que todas las claves (notifications, privacy, etc.) siempre existan.
         const finalSettings = {
             ...defaultSettings,
             ...storedSettings,
@@ -83,7 +85,6 @@ class SettingsManager {
             });
         });
         
-        // Las llamadas ahora funcionarán porque `this.settings` tiene la estructura completa
         this.setupToggle('location-notifications', 'notifications.location', true);
         this.setupToggle('notification-sounds', 'notifications.sounds');
         this.setupToggle('share-location', 'privacy.shareLocation', true);
@@ -133,7 +134,7 @@ class SettingsManager {
                 return await Notification.requestPermission() === 'granted';
             case 'share-location':
                 try {
-                    await navigator.geolocation.getCurrentPosition(() => {}, () => {});
+                    await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject));
                     return true;
                 } catch {
                     return false;
