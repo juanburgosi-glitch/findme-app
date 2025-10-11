@@ -1,8 +1,12 @@
 # Dependencies
 node_modules/
-.env
+package-lock.json
 
-# IDE files
+# Environment
+.env
+.env.local
+
+# Editor
 .vs/
 .vscode/
 *.suo
@@ -10,19 +14,9 @@ node_modules/
 *.njsproj
 *.sln
 
-# Build output
-dist/
-build/
-*.log
+# OS
+.DS_Store
+Thumbs.db
 
-# Runtime data
+# Upload directory
 public/uploads/
-
-# Environment files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Excluir .nojekyll
-!.nojekyll

@@ -7,8 +7,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const routes = require('./src/routes');
-const errorHandler = require('./src/middleware/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -26,14 +24,13 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.static('public'));
+app.use(express.static(__dirname));
 
-// Rutas
-app.use('/api', routes);
-
-// Manejo de errores
-app.use(errorHandler);
+// Rutas principales
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor backend corriendo en puerto ${PORT}`);
-    console.log(`🔗 Ambiente: ${process.env.NODE_ENV || 'desarrollo'}`);
 });

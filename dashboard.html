@@ -9,7 +9,6 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <base href="/findme-app/">
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -122,9 +121,8 @@
     </div>
 
     <script>
-        const API_URL = 'https://findme-app-backend.onrender.com';
-
         document.addEventListener('DOMContentLoaded', () => {
+            const API_URL = 'https://findme-app-backend.onrender.com';
             const token = localStorage.getItem('token');
             if (!token) {
                 window.location.href = 'index.html';
