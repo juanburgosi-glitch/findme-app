@@ -28,72 +28,150 @@
 </head>
 
 <body class="bg-background-dark font-display text-gray-300">
+    <!-- Header con breadcrumbs -->
     <header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <a href="dashboard.html" class="text-primary hover:text-primary/90">
-                        <span class="material-symbols-outlined">arrow_back</span>
-                    </a>
-                    <h1 class="text-xl font-bold text-white">Ajustes</h1>
+            <div class="flex items-center h-16 gap-4">
+                <a href="dashboard.html" class="text-primary hover:text-primary/90">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <div class="flex items-center gap-2 text-sm">
+                    <a href="dashboard.html" class="text-gray-400 hover:text-primary">FindMe</a>
+                    <span class="text-gray-600">/</span>
+                    <span class="text-white">Ajustes</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="max-w-2xl mx-auto">
-            <div class="space-y-6">
-                <!-- Tema -->
-                <div class="bg-card-dark rounded-xl p-6 border border-border-dark">
-                    <h3 class="text-lg font-semibold text-white mb-4">Apariencia</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span>Tema Oscuro</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
-                                <div class="w-11 h-6 bg-border-dark peer-focus:outline-none rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+    <div class="flex">
+        <!-- Navegación lateral -->
+        <aside class="w-64 border-r border-border-dark h-[calc(100vh-4rem)] sticky top-16 flex-shrink-0">
+            <nav class="p-4 space-y-1">
+                <a href="#general" class="flex items-center gap-3 px-4 py-2.5 text-white bg-primary/10 rounded-lg">
+                    <span class="material-symbols-outlined">settings</span>
+                    General
+                </a>
+                <a href="#apariencia" class="flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
+                    <span class="material-symbols-outlined">palette</span>
+                    Apariencia
+                </a>
+                <a href="#notificaciones" class="flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
+                    <span class="material-symbols-outlined">notifications</span>
+                    Notificaciones
+                </a>
+                <a href="#privacidad" class="flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
+                    <span class="material-symbols-outlined">security</span>
+                    Privacidad
+                </a>
+            </nav>
+        </aside>
 
-                <!-- Notificaciones -->
-                <div class="bg-card-dark rounded-xl p-6 border border-border-dark">
-                    <h3 class="text-lg font-semibold text-white mb-4">Notificaciones</h3>
-                    <div class="space-y-4">
+        <!-- Contenido principal -->
+        <main class="flex-1 p-6">
+            <div class="max-w-3xl mx-auto space-y-8">
+                <!-- General -->
+                <section id="general" class="space-y-6">
+                    <h2 class="text-2xl font-semibold text-white">Ajustes generales</h2>
+                    <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="block">Actualizaciones de ubicación</span>
-                                <span class="text-sm text-gray-400">Recibir alertas cuando se actualice la ubicación</span>
+                                <h3 class="font-medium text-white">Idioma</h3>
+                                <p class="text-sm text-gray-400">Selecciona el idioma de la aplicación</p>
+                            </div>
+                            <select class="bg-background-dark border-border-dark rounded-lg text-sm">
+                                <option>Español</option>
+                                <option>English</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Apariencia -->
+                <section id="apariencia" class="space-y-6">
+                    <h2 class="text-2xl font-semibold text-white">Apariencia</h2>
+                    <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-medium text-white">Tema</h3>
+                                    <p class="text-sm text-gray-400">Personaliza la apariencia de FindMe</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <button class="bg-background-dark p-4 rounded-lg border-2 border-primary flex flex-col items-center gap-2">
+                                    <span class="material-symbols-outlined text-3xl">dark_mode</span>
+                                    <span class="text-sm font-medium">Oscuro</span>
+                                </button>
+                                <button class="bg-white p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
+                                    <span class="material-symbols-outlined text-3xl text-gray-900">light_mode</span>
+                                    <span class="text-sm font-medium text-gray-900">Claro</span>
+                                </button>
+                                <button class="bg-background-dark p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
+                                    <span class="material-symbols-outlined text-3xl">devices</span>
+                                    <span class="text-sm font-medium">Sistema</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notificaciones -->
+                <section id="notificaciones" class="space-y-6">
+                    <h2 class="text-2xl font-semibold text-white">Notificaciones</h2>
+                    <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-medium text-white">Actualizaciones de ubicación</h3>
+                                <p class="text-sm text-gray-400">Recibe notificaciones cuando se actualice la ubicación</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="location-notifications" class="sr-only peer">
-                                <div class="w-11 h-6 bg-border-dark peer-focus:outline-none rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                <div class="w-11 h-6 bg-border-dark rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between pt-4 border-t border-border-dark">
+                            <div>
+                                <h3 class="font-medium text-white">Sonidos</h3>
+                                <p class="text-sm text-gray-400">Reproducir sonidos con las notificaciones</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="notification-sounds" class="sr-only peer">
+                                <div class="w-11 h-6 bg-border-dark rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Privacidad -->
-                <div class="bg-card-dark rounded-xl p-6 border border-border-dark">
-                    <h3 class="text-lg font-semibold text-white mb-4">Privacidad</h3>
-                    <div class="space-y-4">
+                <section id="privacidad" class="space-y-6">
+                    <h2 class="text-2xl font-semibold text-white">Privacidad</h2>
+                    <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="block">Compartir ubicación</span>
-                                <span class="text-sm text-gray-400">Permitir que otros vean mi ubicación</span>
+                                <h3 class="font-medium text-white">Compartir ubicación</h3>
+                                <p class="text-sm text-gray-400">Permitir que otros vean mi ubicación</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="share-location" class="sr-only peer">
-                                <div class="w-11 h-6 bg-border-dark peer-focus:outline-none rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                <div class="w-11 h-6 bg-border-dark rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between pt-4 border-t border-border-dark">
+                            <div>
+                                <h3 class="font-medium text-white">Historial de ubicación</h3>
+                                <p class="text-sm text-gray-400">Guardar historial de ubicaciones</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="location-history" class="sr-only peer">
+                                <div class="w-11 h-6 bg-border-dark rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
                         </div>
                     </div>
-                </div>
+                </section>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
