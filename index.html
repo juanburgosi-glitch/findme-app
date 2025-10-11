@@ -4,52 +4,14 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>FindMe - Iniciar Sesión</title>
+    
+    <link href="css/styles.css" rel="stylesheet" />
+    
     <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <link href="/public/css/styles.css" rel="stylesheet" />
-    <!-- Eliminar la carga de Tailwind desde CDN -->
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#13a4ec",
-                        "background-dark": "#101c22",
-                        "card-dark": "#1a2831",
-                        "border-dark": "#2a3c47",
-                    },
-                    fontFamily: { display: ["Inter"] },
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        :root { 
-            --background: #020817; 
-            --foreground: #f8fafc; 
-            --card: #0f172a; 
-            --card-foreground: #f8fafc; 
-            --popover: #020817; 
-            --popover-foreground: #f8fafc; 
-            --primary: #2563eb; 
-            --primary-foreground: #f8fafc; 
-            --secondary: #1e293b; 
-            --secondary-foreground: #f8fafc; 
-            --muted: #1e293b; 
-            --muted-foreground: #94a3b8; 
-            --accent: #1e293b; 
-            --accent-foreground: #f8fafc; 
-            --destructive: #ef4444; 
-            --destructive-foreground: #f8fafc; 
-            --border: #1e293b; 
-            --input: #1e293b; 
-            --ring: #2563eb; 
-            --radius: 0.5rem; 
-        }
-    </style>
-</head>
+    
+    </head>
 
 <body class="bg-background-dark font-display text-gray-300">
     <div class="flex flex-col min-h-screen">
@@ -100,13 +62,12 @@
         <span id="toast-icon" class="material-symbols-outlined"></span>
         <span id="toast-message"></span>
     </div>
-    <!-- Corregir la ruta del archivo main.js -->
-    <script src="/public/js/main.js"></script>
+
+    <script src="js/main.js"></script>
     <script>
         const form = document.getElementById('login-form');
         const API_URL = 'https://findme-app-backend.onrender.com';
 
-        // ===== LÓGICA MODIFICADA =====
         const toast = document.getElementById('toast-notification');
         const toastMessage = document.getElementById('toast-message');
         const toastIcon = document.getElementById('toast-icon');
@@ -146,7 +107,7 @@
                     showToast('¡Inicio de sesión exitoso!');
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
-                    }, 1000); // Espera 1 segundo para que se vea el mensaje
+                    }, 1000);
                 } else {
                     showToast(`Error: ${data.error}`, false);
                 }
@@ -155,7 +116,6 @@
                 showToast('No se pudo conectar con el servidor.', false);
             }
         });
-        // =============================
     </script>
 </body>
 </html>
