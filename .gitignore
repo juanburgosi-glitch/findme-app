@@ -23,3 +23,6 @@ public/uploads/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Excluir .nojekyll
+!.nojekyll
