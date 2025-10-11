@@ -2,10 +2,10 @@
 <html class="dark" lang="es">
 <head>
     <meta charset="utf-8" />
-    <title>FindMe</title>
-
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FindMe - Ajustes</title>
+    
     <link rel="icon" type="image/png" href="public/images/favicon.png" />
-
     <link href="public/css/styles.css" rel="stylesheet" />
 
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -33,19 +33,19 @@
     <div class="flex">
         <aside class="w-64 border-r border-border-dark h-[calc(100vh-4rem)] sticky top-16 flex-shrink-0">
             <nav class="p-4 space-y-1">
-                <a href="#general" class="flex items-center gap-3 px-4 py-2.5 text-white bg-primary/10 rounded-lg">
+                <a href="#general" class="nav-link flex items-center gap-3 px-4 py-2.5 text-white bg-primary/10 rounded-lg">
                     <span class="material-symbols-outlined">settings</span>
                     General
                 </a>
-                <a href="#apariencia" class="flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
+                <a href="#apariencia" class="nav-link flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
                     <span class="material-symbols-outlined">palette</span>
                     Apariencia
                 </a>
-                <a href="#notificaciones" class="flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
+                <a href="#notificaciones" class="nav-link flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
                     <span class="material-symbols-outlined">notifications</span>
                     Notificaciones
                 </a>
-                <a href="#privacidad" class="flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
+                <a href="#privacidad" class="nav-link flex items-center gap-3 px-4 py-2.5 text-gray-400 hover:bg-card-dark rounded-lg">
                     <span class="material-symbols-outlined">security</span>
                     Privacidad
                 </a>
@@ -74,22 +74,20 @@
                     <h2 class="text-2xl font-semibold text-white">Apariencia</h2>
                     <div class="bg-card-dark rounded-xl p-6 space-y-6 border border-border-dark">
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="font-medium text-white">Tema</h3>
-                                    <p class="text-sm text-gray-400">Personaliza la apariencia de FindMe</p>
-                                </div>
+                            <div>
+                                <h3 class="font-medium text-white">Tema</h3>
+                                <p class="text-sm text-gray-400">Personaliza la apariencia de FindMe</p>
                             </div>
                             <div class="grid grid-cols-3 gap-4">
-                                <button data-theme="dark" class="bg-background-dark p-4 rounded-lg border-2 border-primary flex flex-col items-center gap-2">
+                                <button data-theme="dark" class="theme-btn bg-background-dark p-4 rounded-lg border-2 border-transparent flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-3xl">dark_mode</span>
                                     <span class="text-sm font-medium">Oscuro</span>
                                 </button>
-                                <button data-theme="light" class="bg-white p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
+                                <button data-theme="light" class="theme-btn bg-white p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-3xl text-gray-900">light_mode</span>
                                     <span class="text-sm font-medium text-gray-900">Claro</span>
                                 </button>
-                                <button data-theme="system" class="bg-background-dark p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
+                                <button data-theme="system" class="theme-btn bg-background-dark p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-3xl">devices</span>
                                     <span class="text-sm font-medium">Sistema</span>
                                 </button>
