@@ -12,6 +12,8 @@ const { Pool } = require('pg');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
+const winston = require('winston');
 
 const app = express();
 const PORT = process.env.PORT || 10000; // Render usa 10000 por defecto
@@ -91,6 +93,32 @@ function verifyToken(req, res, next) {
     }
 }
 
+// Configuración de logger
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' })
+    ]
+});
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 100 // límite de 100 peticiones por ventana
+});
+
+app.use(limiter);
+
+// Middleware de manejo de errores
+app.use((err, req, res, next) => {
+    logger.error(err.stack);
+    res.status(500).json({ 
+        error: 'Error interno del servidor',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
 
 // =================================================================
 //                       RUTAS DE LA APLICACIÓN
