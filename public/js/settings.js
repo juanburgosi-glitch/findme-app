@@ -1,12 +1,14 @@
 class SettingsManager {
     constructor() {
         this.settings = this.loadSettings();
+        this.applySettings(); // Aplicar ajustes iniciales al cargar
         this.setupEventListeners();
-        this.notificationSound = new Audio('/sounds/notification.mp3');
+        this.notificationSound = new Audio('/public/sounds/notification.mp3'); // Corregir ruta del sonido
     }
 
     loadSettings() {
-        return JSON.parse(localStorage.getItem('findme-settings') || JSON.stringify({
+        // Objeto con la estructura por defecto completa
+        const defaultSettings = {
             language: 'es',
             theme: 'system',
             notifications: {
@@ -17,7 +19,26 @@ class SettingsManager {
                 shareLocation: false,
                 locationHistory: false
             }
-        }));
+        };
+
+        // Cargar las configuraciones guardadas
+        const storedSettings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
+
+        // Combinar los valores por defecto con los guardados, asegurando que todas las claves existan
+        const finalSettings = {
+            ...defaultSettings,
+            ...storedSettings,
+            notifications: {
+                ...defaultSettings.notifications,
+                ...(storedSettings.notifications || {})
+            },
+            privacy: {
+                ...defaultSettings.privacy,
+                ...(storedSettings.privacy || {})
+            }
+        };
+
+        return finalSettings;
     }
 
     saveSettings() {
@@ -26,13 +47,8 @@ class SettingsManager {
     }
 
     applySettings() {
-        // Aplicar idioma
         document.documentElement.lang = this.settings.language;
-
-        // Aplicar tema
         this.applyTheme();
-
-        // Notificar a otras páginas del cambio
         window.dispatchEvent(new Event('settings-changed'));
     }
 
@@ -42,11 +58,9 @@ class SettingsManager {
             : this.settings.theme;
 
         document.documentElement.classList.toggle('dark', theme === 'dark');
-        document.body.classList.toggle('bg-background-dark', theme === 'dark');
     }
 
     setupEventListeners() {
-        // Idioma
         const languageSelect = document.getElementById('language-select');
         if (languageSelect) {
             languageSelect.value = this.settings.language;
@@ -56,9 +70,11 @@ class SettingsManager {
             });
         }
 
-        // Tema
         const themeButtons = document.querySelectorAll('[data-theme]');
         themeButtons.forEach(button => {
+            if (button.dataset.theme === this.settings.theme) {
+                button.classList.add('border-primary');
+            }
             button.addEventListener('click', () => {
                 themeButtons.forEach(b => b.classList.remove('border-primary'));
                 button.classList.add('border-primary');
@@ -66,16 +82,13 @@ class SettingsManager {
                 this.saveSettings();
             });
         });
-
-        // Notificaciones
+        
+        // Las llamadas ahora funcionarán porque `this.settings` tiene la estructura completa
         this.setupToggle('location-notifications', 'notifications.location', true);
         this.setupToggle('notification-sounds', 'notifications.sounds');
-
-        // Privacidad
         this.setupToggle('share-location', 'privacy.shareLocation', true);
         this.setupToggle('location-history', 'privacy.locationHistory');
 
-        // Escuchar cambios del sistema
         if (window.matchMedia) {
             window.matchMedia('(prefers-color-scheme: dark)')
                 .addEventListener('change', () => this.applyTheme());
@@ -86,12 +99,12 @@ class SettingsManager {
         const toggle = document.getElementById(id);
         if (!toggle) return;
 
-        // Establecer estado inicial
-        const value = settingPath.split('.').reduce((obj, key) => obj[key], this.settings);
+        const keys = settingPath.split('.');
+        const value = keys.reduce((obj, key) => obj[key], this.settings);
         toggle.checked = value;
 
         toggle.addEventListener('change', async (e) => {
-            if (requiresPermission) {
+            if (e.target.checked && requiresPermission) {
                 const granted = await this.requestPermission(id);
                 if (!granted) {
                     e.target.checked = false;
@@ -99,17 +112,14 @@ class SettingsManager {
                 }
             }
 
-            // Actualizar configuración
-            const keys = settingPath.split('.');
             let current = this.settings;
             for (let i = 0; i < keys.length - 1; i++) {
                 current = current[keys[i]];
             }
             current[keys[keys.length - 1]] = e.target.checked;
 
-            // Reproducir sonido de prueba si es necesario
             if (id === 'notification-sounds' && e.target.checked) {
-                this.notificationSound.play();
+                this.notificationSound.play().catch(err => console.error("Error al reproducir sonido:", err));
             }
 
             this.saveSettings();
@@ -119,29 +129,17 @@ class SettingsManager {
     async requestPermission(feature) {
         switch (feature) {
             case 'location-notifications':
-                return await this.requestNotificationPermission();
+                if (Notification.permission === 'granted') return true;
+                return await Notification.requestPermission() === 'granted';
             case 'share-location':
-                return await this.requestLocationPermission();
+                try {
+                    await navigator.geolocation.getCurrentPosition(() => {}, () => {});
+                    return true;
+                } catch {
+                    return false;
+                }
             default:
                 return true;
-        }
-    }
-
-    async requestNotificationPermission() {
-        try {
-            const permission = await Notification.requestPermission();
-            return permission === 'granted';
-        } catch {
-            return false;
-        }
-    }
-
-    async requestLocationPermission() {
-        try {
-            await navigator.geolocation.getCurrentPosition(() => {});
-            return true;
-        } catch {
-            return false;
         }
     }
 }
