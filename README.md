@@ -1,5 +1,9 @@
 # FindMe App
 
+[![Node.js](https://img.shields.io/badge/Node.js-v18.x-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-v4.x-blue.svg)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v14.x-blue.svg)](https://www.postgresql.org/)
+
 Aplicación web para el seguimiento y gestión de información de personas a cargo.
 
 ## Características
@@ -47,6 +51,19 @@ npm start
 Para ejecutar las pruebas:
 ```bash
 npm test
+```
+
+## API Endpoints
+
+La API proporciona los siguientes endpoints:
+
+```
+POST   /api/auth/register    # Registro de usuarios
+POST   /api/auth/login       # Inicio de sesión
+GET    /api/people          # Obtener lista de personas
+POST   /api/people          # Añadir nueva persona
+PUT    /api/people/:id      # Actualizar persona
+DELETE /api/people/:id      # Eliminar persona
 ```
 
 ## Estructura del Proyecto
