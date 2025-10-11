@@ -52,12 +52,24 @@ npm test
 ## Estructura del Proyecto
 
 ```
-findme-app/
-├── public/         # Archivos estáticos
-├── tests/         # Pruebas unitarias
-├── logs/          # Archivos de registro
-├── server.js      # Punto de entrada
-└── package.json
+findme-app\
+├── src\                # Código fuente
+│   ├── config\        # Configuraciones
+│   ├── controllers\   # Controladores
+│   ├── middleware\    # Middleware
+│   ├── models\        # Modelos de datos
+│   ├── routes\        # Rutas de la API
+│   ├── services\      # Servicios
+│   └── utils\         # Utilidades
+├── public\            # Archivos estáticos
+│   ├── css\          # Estilos
+│   ├── js\           # Scripts
+│   ├── images\       # Imágenes
+│   └── sounds\       # Archivos de audio
+├── views\            # Archivos HTML
+├── tests\            # Pruebas unitarias
+├── logs\             # Archivos de registro
+└── server.js         # Punto de entrada
 ```
 
 ## Licencia

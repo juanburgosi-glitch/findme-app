@@ -79,9 +79,9 @@
                                 <h3 class="font-medium text-white">Idioma</h3>
                                 <p class="text-sm text-gray-400">Selecciona el idioma de la aplicación</p>
                             </div>
-                            <select class="bg-background-dark border-border-dark rounded-lg text-sm">
-                                <option>Español</option>
-                                <option>English</option>
+                            <select id="language-select" class="bg-background-dark border-border-dark rounded-lg text-sm">
+                                <option value="es">Español</option>
+                                <option value="en">English</option>
                             </select>
                         </div>
                     </div>
@@ -99,15 +99,15 @@
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-4">
-                                <button class="bg-background-dark p-4 rounded-lg border-2 border-primary flex flex-col items-center gap-2">
+                                <button data-theme="dark" class="bg-background-dark p-4 rounded-lg border-2 border-primary flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-3xl">dark_mode</span>
                                     <span class="text-sm font-medium">Oscuro</span>
                                 </button>
-                                <button class="bg-white p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
+                                <button data-theme="light" class="bg-white p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-3xl text-gray-900">light_mode</span>
                                     <span class="text-sm font-medium text-gray-900">Claro</span>
                                 </button>
-                                <button class="bg-background-dark p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
+                                <button data-theme="system" class="bg-background-dark p-4 rounded-lg border-2 border-transparent hover:border-primary flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-3xl">devices</span>
                                     <span class="text-sm font-medium">Sistema</span>
                                 </button>
@@ -173,135 +173,10 @@
         </main>
     </div>
 
+    <script src="/js/settings.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const locationNotifications = document.getElementById('location-notifications');
-            const shareLocation = document.getElementById('share-location');
-
-            // Función para aplicar el tema
-            function applyTheme(isDark) {
-                if (isDark) {
-                    document.documentElement.classList.add('dark');
-                    document.body.classList.remove('bg-gray-100');
-                    document.body.classList.add('bg-background-dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    document.body.classList.add('bg-gray-100');
-                    document.body.classList.remove('bg-background-dark');
-                }
-            }
-
-            // Función para manejar notificaciones
-            async function setupNotifications(enabled) {
-                if (enabled) {
-                    try {
-                        const permission = await Notification.requestPermission();
-                        if (permission !== 'granted') {
-                            locationNotifications.checked = false;
-                            alert('Se requieren permisos de notificación.');
-                            return false;
-                        }
-                        return true;
-                    } catch (error) {
-                        console.error('Error al solicitar permisos:', error);
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            // Función para manejar la ubicación
-            async function setupLocation(enabled) {
-                if (enabled) {
-                    try {
-                        const position = await new Promise((resolve, reject) => {
-                            navigator.geolocation.getCurrentPosition(resolve, reject);
-                        });
-                        return true;
-                    } catch (error) {
-                        shareLocation.checked = false;
-                        alert('Se requiere acceso a la ubicación para esta función.');
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            // Cargar y aplicar configuraciones guardadas
-            const loadSettings = () => {
-                const settings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
-                
-                // Aplicar tema
-                darkModeToggle.checked = settings.darkMode ?? true;
-                applyTheme(darkModeToggle.checked);
-                
-                // Aplicar notificaciones
-                locationNotifications.checked = settings.locationNotifications ?? false;
-                if (locationNotifications.checked) {
-                    setupNotifications(true);
-                }
-                
-                // Aplicar ubicación
-                shareLocation.checked = settings.shareLocation ?? false;
-                if (shareLocation.checked) {
-                    setupLocation(true);
-                }
-            };
-
-            // Guardar configuraciones
-            const saveSettings = () => {
-                const settings = {
-                    darkMode: darkModeToggle.checked,
-                    locationNotifications: locationNotifications.checked,
-                    shareLocation: shareLocation.checked
-                };
-                localStorage.setItem('findme-settings', JSON.stringify(settings));
-            };
-
-            // Event listeners
-            darkModeToggle.addEventListener('change', (e) => {
-                applyTheme(e.target.checked);
-                saveSettings();
-            });
-
-            locationNotifications.addEventListener('change', async (e) => {
-                const enabled = await setupNotifications(e.target.checked);
-                locationNotifications.checked = enabled;
-                saveSettings();
-                
-                if (enabled) {
-                    // Mostrar notificación de prueba
-                    new Notification('FindMe', {
-                        body: 'Las notificaciones están activadas',
-                        icon: '/icon.png'
-                    });
-                }
-            });
-
-            shareLocation.addEventListener('change', async (e) => {
-                const enabled = await setupLocation(e.target.checked);
-                shareLocation.checked = enabled;
-                saveSettings();
-                
-                if (enabled) {
-                    alert('Compartir ubicación activado correctamente');
-                }
-            });
-
-            // Inicializar configuraciones
-            loadSettings();
-
-            // Verificar si el navegador soporta las características
-            if (!('Notification' in window)) {
-                locationNotifications.disabled = true;
-                locationNotifications.parentElement.title = 'Tu navegador no soporta notificaciones';
-            }
-
-            if (!('geolocation' in navigator)) {
-                shareLocation.disabled = true;
-                shareLocation.parentElement.title = 'Tu navegador no soporta geolocalización';
-            }
+            const settingsManager = new SettingsManager();
         });
     </script>
 </body>
