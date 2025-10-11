@@ -222,6 +222,15 @@
                 }
             }
             
+            function checkLocationSettings() {
+                const settings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
+                if (!settings.shareLocation) {
+                    elements.mapContainer.innerHTML = '<div class="text-center p-4 text-gray-400">El compartir ubicación está desactivado en ajustes</div>';
+                    return false;
+                }
+                return true;
+            }
+
             function updateMapLocation(position) {
                 const { latitude, longitude } = position.coords;
                 elements.locationStatus.textContent = 'Ubicación actualizada';
@@ -235,16 +244,29 @@
                 if (localStorage.getItem('trackingEnabledFor') === personId) {
                     updateLocationOnServer(latitude, longitude);
                 }
+
+                // Notificar si está activado
+                const settings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
+                if (settings.locationNotifications) {
+                    new Notification('FindMe', {
+                        body: `Ubicación actualizada para ${elements.fullNameHeader.textContent}`,
+                        icon: '/icon.png'
+                    });
+                }
             }
 
             function handleLocationError(error) { /* ... (manejo de errores de geolocalización) ... */ }
             
             function startContinuousTracking() {
-                 if ('geolocation' in navigator) {
-                    navigator.geolocation.watchPosition(updateMapLocation, handleLocationError, geoOptions);
-                 } else {
-                    elements.locationStatus.textContent = 'Geolocalización no es compatible.';
-                 }
+                if (!checkLocationSettings()) return;
+                
+                if ('geolocation' in navigator) {
+                    navigator.geolocation.watchPosition(
+                        updateMapLocation,
+                        handleLocationError,
+                        geoOptions
+                    );
+                }
             }
 
             // Iniciar seguimiento

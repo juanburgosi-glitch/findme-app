@@ -101,45 +101,129 @@
             const locationNotifications = document.getElementById('location-notifications');
             const shareLocation = document.getElementById('share-location');
 
-            // Cargar preferencias guardadas
-            const settings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
-            darkModeToggle.checked = settings.darkMode ?? true;
-            locationNotifications.checked = settings.locationNotifications ?? false;
-            shareLocation.checked = settings.shareLocation ?? false;
+            // Función para aplicar el tema
+            function applyTheme(isDark) {
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.remove('bg-gray-100');
+                    document.body.classList.add('bg-background-dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.add('bg-gray-100');
+                    document.body.classList.remove('bg-background-dark');
+                }
+            }
 
-            // Aplicar tema inicial
-            document.documentElement.classList.toggle('dark', darkModeToggle.checked);
+            // Función para manejar notificaciones
+            async function setupNotifications(enabled) {
+                if (enabled) {
+                    try {
+                        const permission = await Notification.requestPermission();
+                        if (permission !== 'granted') {
+                            locationNotifications.checked = false;
+                            alert('Se requieren permisos de notificación.');
+                            return false;
+                        }
+                        return true;
+                    } catch (error) {
+                        console.error('Error al solicitar permisos:', error);
+                        return false;
+                    }
+                }
+                return false;
+            }
 
-            // Guardar cambios
-            function saveSettings() {
+            // Función para manejar la ubicación
+            async function setupLocation(enabled) {
+                if (enabled) {
+                    try {
+                        const position = await new Promise((resolve, reject) => {
+                            navigator.geolocation.getCurrentPosition(resolve, reject);
+                        });
+                        return true;
+                    } catch (error) {
+                        shareLocation.checked = false;
+                        alert('Se requiere acceso a la ubicación para esta función.');
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            // Cargar y aplicar configuraciones guardadas
+            const loadSettings = () => {
+                const settings = JSON.parse(localStorage.getItem('findme-settings') || '{}');
+                
+                // Aplicar tema
+                darkModeToggle.checked = settings.darkMode ?? true;
+                applyTheme(darkModeToggle.checked);
+                
+                // Aplicar notificaciones
+                locationNotifications.checked = settings.locationNotifications ?? false;
+                if (locationNotifications.checked) {
+                    setupNotifications(true);
+                }
+                
+                // Aplicar ubicación
+                shareLocation.checked = settings.shareLocation ?? false;
+                if (shareLocation.checked) {
+                    setupLocation(true);
+                }
+            };
+
+            // Guardar configuraciones
+            const saveSettings = () => {
                 const settings = {
                     darkMode: darkModeToggle.checked,
                     locationNotifications: locationNotifications.checked,
                     shareLocation: shareLocation.checked
                 };
                 localStorage.setItem('findme-settings', JSON.stringify(settings));
-            }
+            };
 
             // Event listeners
-            darkModeToggle.addEventListener('change', () => {
-                document.documentElement.classList.toggle('dark', darkModeToggle.checked);
+            darkModeToggle.addEventListener('change', (e) => {
+                applyTheme(e.target.checked);
                 saveSettings();
             });
 
-            locationNotifications.addEventListener('change', saveSettings);
-            shareLocation.addEventListener('change', saveSettings);
-
-            // Solicitar permisos de notificación si está activado
             locationNotifications.addEventListener('change', async (e) => {
-                if (e.target.checked && Notification.permission !== 'granted') {
-                    const permission = await Notification.requestPermission();
-                    if (permission !== 'granted') {
-                        e.target.checked = false;
-                        alert('Se requieren permisos de notificación para esta función.');
-                    }
-                }
+                const enabled = await setupNotifications(e.target.checked);
+                locationNotifications.checked = enabled;
                 saveSettings();
+                
+                if (enabled) {
+                    // Mostrar notificación de prueba
+                    new Notification('FindMe', {
+                        body: 'Las notificaciones están activadas',
+                        icon: '/icon.png'
+                    });
+                }
             });
+
+            shareLocation.addEventListener('change', async (e) => {
+                const enabled = await setupLocation(e.target.checked);
+                shareLocation.checked = enabled;
+                saveSettings();
+                
+                if (enabled) {
+                    alert('Compartir ubicación activado correctamente');
+                }
+            });
+
+            // Inicializar configuraciones
+            loadSettings();
+
+            // Verificar si el navegador soporta las características
+            if (!('Notification' in window)) {
+                locationNotifications.disabled = true;
+                locationNotifications.parentElement.title = 'Tu navegador no soporta notificaciones';
+            }
+
+            if (!('geolocation' in navigator)) {
+                shareLocation.disabled = true;
+                shareLocation.parentElement.title = 'Tu navegador no soporta geolocalización';
+            }
         });
     </script>
 </body>
