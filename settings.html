@@ -10,6 +10,7 @@
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script src="public/js/translator.js"></script>
 </head>
 <body class="bg-background-dark font-display text-gray-300">
     <header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
@@ -19,7 +20,7 @@
                     <span class="material-symbols-outlined">arrow_back</span>
                 </a>
                 <div class="flex items-center gap-2 text-sm">
-                    <a href="dashboard.html" class="text-gray-400 hover:text-primary">FindMe</a>
+                    <a href="dashboard.html" class="text-gray-400 hover:text-primary" data-translate-key="findme-title">FindMe</a>
                     <span class="text-gray-600">/</span>
                     <span class="text-white" data-translate-key="settings-title">Ajustes</span>
                 </div>
@@ -107,7 +108,7 @@
     <script src="public/js/settings.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const settingsManager = new SettingsManager();
+            new SettingsManager();
         });
     </script>
 </body>

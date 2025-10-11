@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title id="page-title">FindMe - Ficha Médica</title>
+    <title id="page-title" data-translate-key="profile-page-title">FindMe - Ficha Médica</title>
     
     <link rel="icon" type="image/png" href="public/images/favicon.png" />
-
     <link href="public/css/styles.css" rel="stylesheet" />
     
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -14,42 +13,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="public/js/translator.js"></script>
     <style> .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; } </style>
 </head>
 <body class="bg-background-dark font-display text-gray-300">
 
-    <header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2 text-primary">
-                    <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
-                    <h1 class="text-xl font-bold text-white">FindMe</h1>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <button id="user-menu-button" class="w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
-                            <span class="material-symbols-outlined"> account_circle </span>
-                        </button>
-                        <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-card-dark rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-30">
-                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
-                                <a href="edit-profile.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Mi Perfil</a>
-                                <a href="settings.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10">Ajustes</a>
-                                <div class="border-t border-border-dark my-1"></div>
-                                <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20">Cerrar Sesión</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <include src="./partials/_header.html"></include>
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-6">
                 <a href="dashboard.html" class="flex items-center gap-2 text-primary hover:underline">
                     <span class="material-symbols-outlined">arrow_back</span>
-                    Volver al listado
+                    <span data-translate-key="back-to-list">Volver al listado</span>
                 </a>
             </div>
 
@@ -59,35 +36,35 @@
                         <img id="profile-image" class="w-24 h-24 rounded-full object-cover border-2 border-primary" src="" alt="Foto de perfil">
                         <div class="flex-grow">
                             <h2 class="text-3xl font-bold text-white" id="full-name-header">-</h2>
-                            <p class="text-slate-400">Ficha Médica</p>
+                            <p class="text-slate-400" data-translate-key="medical-record">Ficha Médica</p>
                         </div>
-                        <button id="track-device-btn" class="flex items-center gap-2 bg-primary/10 text-primary font-semibold py-2 px-4 rounded-lg hover:bg-primary/20 transition-colors">
+                        <button id="track-device-btn" class="flex items-center gap-2 bg-primary/10 text-primary font-semibold py-2 px-4 rounded-lg hover:bg-primary/20">
                             <span class="material-symbols-outlined text-base">gps_fixed</span>
-                            <span>Anclar este Dispositivo</span>
+                            <span data-translate-key="pin-device-button">Anclar este Dispositivo</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="border-t border-border-dark p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <h3 class="md:col-span-2 text-lg font-semibold text-white border-b border-border-dark pb-2 mb-2">Información Personal</h3>
-                    <div><strong class="text-slate-400 block">Nombre Completo</strong><span id="full-name-info">-</span></div>
-                    <div><strong class="text-slate-400 block">Teléfono de Contacto</strong><span id="contact-number-info">-</span></div>
-                    <div><strong class="text-slate-400 block">Hospital</strong><span id="hospital-info">-</span></div>
-                    <div><strong class="text-slate-400 block">Condiciones Médicas</strong><span id="conditions-info">-</span></div>
+                    <h3 class="md:col-span-2 text-lg font-semibold text-white border-b border-border-dark pb-2 mb-2" data-translate-key="personal-info-header">Información Personal</h3>
+                    <div><strong class="text-slate-400 block" data-translate-key="full-name-label">Nombre Completo</strong><span id="full-name-info">-</span></div>
+                    <div><strong class="text-slate-400 block" data-translate-key="contact-number-label">Teléfono de Contacto</strong><span id="contact-number-info">-</span></div>
+                    <div><strong class="text-slate-400 block" data-translate-key="preferred-hospital-label">Hospital</strong><span id="hospital-info">-</span></div>
+                    <div><strong class="text-slate-400 block" data-translate-key="medical-conditions-label">Condiciones Médicas</strong><span id="conditions-info">-</span></div>
                 </div>
                 
                 <div class="border-t border-border-dark p-6">
-                     <h3 class="text-lg font-semibold text-white mb-4">Ubicación en Tiempo Real</h3>
+                     <h3 class="text-lg font-semibold text-white mb-4" data-translate-key="real-time-location-header">Ubicación en Tiempo Real</h3>
                      <div class="flex items-center justify-between mb-4">
                         <div>
                             <button id="reload-location-btn" class="flex items-center gap-2 text-sm text-primary hover:underline">
                                 <span class="material-symbols-outlined text-lg">my_location</span>
-                                Actualizar
+                                <span data-translate-key="update-location-button">Actualizar</span>
                             </button>
                         </div>
                         <div class="text-right">
-                             <p class="text-sm" id="location-status">Obteniendo ubicación...</p>
-                             <p class="text-xs text-slate-400" id="last-updated">...</p>
+                             <p class="text-sm" id="location-status" data-translate-key="current-location-status">Ubicación actual</p>
+                             <p class="text-xs text-slate-400" id="last-updated"><span data-translate-key="last-updated-label">Última vez:</span> ...</p>
                         </div>
                      </div>
                      <div id="map" class="h-64 w-full rounded-lg bg-background-dark border border-border-dark"></div>
@@ -96,11 +73,14 @@
         </div>
     </main>
     
-    <div id="logout-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-        </div>
+    <div id="logout-modal" class="hidden ...">
+        <h3 class="text-lg font-bold text-white mt-4" data-translate-key="logout">Cerrar Sesión</h3>
+        <p class="text-sm text-slate-400 mt-2" data-translate-key="logout-modal-prompt">¿Estás seguro de que deseas cerrar sesión?</p>
+        <button id="cancel-logout-btn" type="button" class="..." data-translate-key="cancel">Cancelar</button>
+        <button id="confirm-logout-btn" class="..." data-translate-key="confirm">Confirmar</button>
+    </div>
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script src="public/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
