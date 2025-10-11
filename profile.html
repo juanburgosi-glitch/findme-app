@@ -5,6 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title id="page-title">FindMe - Ficha Médica</title>
     
+    <link rel="icon" type="image/png" href="public/images/favicon.png" />
+
     <link href="public/css/styles.css" rel="stylesheet" />
     
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -98,7 +100,9 @@
         </div>
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="public/js/main.js"></script> <script>
+    
+    <script src="public/js/main.js"></script>
+    <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const API_URL = 'https://findme-app-backend.onrender.com';
             const token = localStorage.getItem('token');
@@ -160,8 +164,9 @@
                 document.getElementById('location-status').textContent = 'Ubicación actualizada';
                 document.getElementById('last-updated').textContent = `Última vez: ${new Date().toLocaleTimeString()}`;
                 
-                if (!map) initMap(latitude, longitude);
-                else {
+                if (!map) {
+                    initMap(latitude, longitude);
+                } else {
                     const newLatLng = new L.LatLng(latitude, longitude);
                     marker.setLatLng(newLatLng);
                     map.panTo(newLatLng);
@@ -169,18 +174,17 @@
                 
                 updateLocationOnServer(latitude, longitude);
 
-                // Notificar si está activado
                 if (Notification.permission === 'granted') {
                     new Notification('FindMe', {
                         body: `Ubicación actualizada para ${document.getElementById('full-name-header').textContent}`,
-                        icon: 'public/images/icon.png' // Ruta corregida, debes añadir la imagen aquí
+                        icon: 'public/images/icon.png' // Asegúrate de que este archivo exista
                     });
                 }
             }
 
             function handleLocationError(error) {
                  document.getElementById('location-status').textContent = 'Error de ubicación';
-                 mapContainer.innerHTML = `<div class="text-center p-4 text-gray-400">No se pudo obtener la ubicación. Código de error: ${error.code}</div>`;
+                 mapContainer.innerHTML = `<div class="text-center p-4 text-gray-400">No se pudo obtener la ubicación. Código: ${error.code}</div>`;
             }
             
             navigator.geolocation.watchPosition(updateMapLocation, handleLocationError, { enableHighAccuracy: true });
