@@ -1,18 +1,26 @@
-const transporter = require('../config/email.config');
-
-// Almacenamiento temporal de códigos (en producción usar Redis)
-const verificationCodes = new Map();
+const nodemailer = require('nodemailer');
 
 class VerificationService {
-    static generateCode() {
+    constructor() {
+        this.codes = new Map();
+        this.transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_APP_PASSWORD
+            }
+        });
+    }
+
+    generateCode() {
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    static async sendVerificationEmail(email, code) {
+    async sendVerificationEmail(email, code) {
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: 'Código de verificación - FindMe',
+            subject: 'Verificación de cuenta - FindMe',
             html: `
                 <h1>Bienvenido a FindMe</h1>
                 <p>Tu código de verificación es: <strong>${code}</strong></p>
@@ -20,28 +28,27 @@ class VerificationService {
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        await this.transporter.sendMail(mailOptions);
     }
 
-    static storeCode(email, code) {
-        verificationCodes.set(email, {
+    storeCode(email, code) {
+        this.codes.set(email, {
             code,
             timestamp: Date.now()
         });
 
         // Eliminar código después de 10 minutos
         setTimeout(() => {
-            verificationCodes.delete(email);
+            this.codes.delete(email);
         }, 600000);
     }
 
-    static verifyCode(email, code) {
-        const stored = verificationCodes.get(email);
+    verifyCode(email, code) {
+        const stored = this.codes.get(email);
         if (!stored) return false;
         
-        // Verificar si el código no ha expirado (10 minutos)
         if (Date.now() - stored.timestamp > 600000) {
-            verificationCodes.delete(email);
+            this.codes.delete(email);
             return false;
         }
 
@@ -49,4 +56,4 @@ class VerificationService {
     }
 }
 
-module.exports = VerificationService;
+module.exports = new VerificationService();
