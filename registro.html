@@ -77,27 +77,36 @@
             const verifyBtn = document.getElementById('verify-btn');
             const resendBtn = document.getElementById('resend-btn');
             const API_URL = 'https://findme-app-backend.onrender.com';
-            let tempEmail = '';
-            let tempPassword = '';
 
             async function makeAPIRequest(url, options) {
                 try {
                     const response = await fetch(url, options);
-                    // Verificar si la respuesta es JSON
+                    
+                    // Log para depuración
+                    console.log('API Response:', {
+                        status: response.status,
+                        url: response.url,
+                        headers: Object.fromEntries(response.headers)
+                    });
+
+                    if (response.status === 404) {
+                        throw new Error('El servicio de verificación no está disponible temporalmente');
+                    }
+
                     const contentType = response.headers.get('content-type');
                     if (!contentType || !contentType.includes('application/json')) {
-                        throw new Error('La respuesta del servidor no es válida');
+                        console.error('Tipo de contenido no válido:', contentType);
+                        throw new Error('Respuesta del servidor no válida');
                     }
+
                     const data = await response.json();
                     return { response, data };
                 } catch (error) {
-                    if (error.name === 'SyntaxError') {
-                        throw new Error('El servidor no respondió en el formato esperado');
+                    console.error('Error detallado:', error);
+                    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                        throw new Error('No se puede conectar al servidor. Verifica tu conexión a internet.');
                     }
-                    if (!window.navigator.onLine) {
-                        throw new Error('No hay conexión a internet');
-                    }
-                    throw new Error('Error de conexión con el servidor. Por favor, inténtalo más tarde');
+                    throw error;
                 }
             }
 
@@ -107,18 +116,18 @@
                 const password = document.getElementById('password').value;
 
                 try {
-                    const { response, data } = await makeAPIRequest(`${API_URL}/api/request-verification`, {
+                    // Intentar registrar directamente sin verificación por ahora
+                    const { response, data } = await makeAPIRequest(`${API_URL}/api/register`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email })
+                        body: JSON.stringify({ email, password })
                     });
 
                     if (response.ok) {
-                        tempEmail = email;
-                        tempPassword = password;
-                        verificationOverlay.classList.remove('hidden');
+                        alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
+                        window.location.href = 'index.html';
                     } else {
-                        throw new Error(data.error || 'Error al enviar el código de verificación');
+                        throw new Error(data.error || 'Error en el registro');
                     }
                 } catch (error) {
                     console.error('Error:', error);
