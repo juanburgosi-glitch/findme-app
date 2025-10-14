@@ -28,13 +28,6 @@
                         <input autocomplete="email" class="w-full px-4 py-3 rounded-lg bg-background-dark border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-primary" id="email" name="email" data-translate-key="email-placeholder" data-translate-property="placeholder" required type="email" />
                     </div>
                 </div>
-                <div id="verification-section" class="hidden">
-                    <label class="block text-sm font-medium text-gray-400" for="verification-code" data-translate-key="verification-code-label">Código de verificación</label>
-                    <div class="mt-1">
-                        <input class="w-full px-4 py-3 rounded-lg bg-background-dark border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-primary" id="verification-code" name="verification-code" data-translate-key="verification-code-placeholder" data-translate-property="placeholder" placeholder="Ingresa el código de 6 dígitos" maxlength="6" required type="text" pattern="\d{6}" />
-                    </div>
-                    <p class="mt-2 text-sm text-gray-400" data-translate-key="verification-help">Se ha enviado un código de verificación a tu correo electrónico</p>
-                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-400" for="password" data-translate-key="password-label">Contraseña</label>
                     <div class="mt-1">
@@ -42,8 +35,8 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row-reverse gap-4 pt-4">
-                    <button id="submit-btn" class="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90" type="submit" data-translate-key="send-verification">
-                        Enviar código de verificación
+                    <button id="submit-btn" class="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90" type="submit" data-translate-key="confirm">
+                        Confirmar
                     </button>
                     <a href="index.html" class="w-full inline-flex justify-center py-3 px-4 border border-border-dark shadow-sm text-sm font-medium rounded-lg text-gray-300 bg-card-dark hover:bg-border-dark" data-translate-key="cancel">
                         Cancelar
@@ -52,66 +45,111 @@
             </form>
         </div>
     </div>
+
+    <!-- Verification overlay -->
+    <div id="verification-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-md p-8 m-4 border border-border-dark">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-white mb-4" data-translate-key="verification-title">Verificación de correo</h2>
+                <p class="text-gray-400 mb-6" data-translate-key="verification-message">Hemos enviado un código de verificación a tu correo electrónico.</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2" for="verification-code" data-translate-key="verification-code-label">Código de verificación</label>
+                    <input class="w-full px-4 py-3 rounded-lg bg-background-dark border-border-dark text-white focus:outline-none focus:ring-2 focus:ring-primary" id="verification-code" type="text" maxlength="6" pattern="\d{6}" placeholder="Ingresa el código de 6 dígitos" required />
+                </div>
+                <div class="flex flex-col gap-3">
+                    <button id="verify-btn" class="w-full py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90" data-translate-key="send-verification">
+                        Enviar confirmación
+                    </button>
+                    <button id="resend-btn" class="text-primary hover:text-primary/80 text-sm" data-translate-key="resend-code">
+                        Reenviar código
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('register-form');
-            const verificationSection = document.getElementById('verification-section');
-            const submitBtn = document.getElementById('submit-btn');
+            const verificationOverlay = document.getElementById('verification-overlay');
+            const verifyBtn = document.getElementById('verify-btn');
+            const resendBtn = document.getElementById('resend-btn');
             const API_URL = 'https://findme-app-backend.onrender.com';
-            let isVerificationStep = false;
             let tempEmail = '';
-            
+            let tempPassword = '';
+
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                const verificationCode = document.getElementById('verification-code').value;
 
                 try {
-                    if (!isVerificationStep) {
-                        // Primer paso: Solicitar código de verificación
-                        const response = await fetch(`${API_URL}/api/request-verification`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email })
-                        });
-                        const data = await response.json();
+                    // Solicitar código de verificación
+                    const response = await fetch(`${API_URL}/api/request-verification`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await response.json();
 
-                        if (response.ok) {
-                            isVerificationStep = true;
-                            tempEmail = email;
-                            verificationSection.classList.remove('hidden');
-                            submitBtn.textContent = 'Crear Cuenta';
-                            submitBtn.dataset.translateKey = 'create-account-button';
-                            // Deshabilitar campos de email y contraseña
-                            document.getElementById('email').readOnly = true;
-                            document.getElementById('email').classList.add('cursor-not-allowed', 'opacity-75');
-                        } else {
-                            alert(`Error: ${data.error || 'Ocurrió un error al enviar el código.'}`);
-                        }
+                    if (response.ok) {
+                        tempEmail = email;
+                        tempPassword = password;
+                        verificationOverlay.classList.remove('hidden');
                     } else {
-                        // Segundo paso: Verificar código y crear cuenta
-                        const response = await fetch(`${API_URL}/api/register`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ 
-                                email: tempEmail, 
-                                password, 
-                                verificationCode 
-                            })
-                        });
-                        const data = await response.json();
-
-                        if (response.ok) {
-                            alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
-                            window.location.href = 'index.html';
-                        } else {
-                            alert(`Error: ${data.error || 'Código de verificación inválido.'}`);
-                        }
+                        alert(`Error: ${data.error || 'Ocurrió un error al enviar el código.'}`);
                     }
                 } catch (error) {
-                    console.error('Error de red:', error);
+                    console.error('Error:', error);
                     alert('No se pudo conectar con el servidor. Inténtalo de nuevo más tarde.');
+                }
+            });
+
+            verifyBtn.addEventListener('click', async () => {
+                const verificationCode = document.getElementById('verification-code').value;
+                try {
+                    const response = await fetch(`${API_URL}/api/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            email: tempEmail, 
+                            password: tempPassword, 
+                            verificationCode 
+                        })
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
+                        window.location.href = 'index.html';
+                    } else {
+                        alert(`Error: ${data.error || 'Código de verificación inválido.'}`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al verificar el código. Inténtalo de nuevo.');
+                }
+            });
+
+            resendBtn.addEventListener('click', async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/request-verification`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: tempEmail })
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('Se ha enviado un nuevo código de verificación.');
+                    } else {
+                        alert(`Error: ${data.error || 'No se pudo reenviar el código.'}`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al reenviar el código. Inténtalo de nuevo.');
                 }
             });
         });
