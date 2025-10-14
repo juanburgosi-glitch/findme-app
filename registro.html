@@ -46,7 +46,6 @@
         </div>
     </div>
 
-    <!-- Verification overlay -->
     <div id="verification-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-md p-8 m-4 border border-border-dark">
             <div class="text-center">
@@ -65,6 +64,9 @@
                     <button id="resend-btn" class="text-primary hover:text-primary/80 text-sm" data-translate-key="resend-code">
                         Reenviar código
                     </button>
+                    <button id="cancel-verify-btn" class="text-gray-400 hover:text-gray-300 text-sm" type="button" data-translate-key="cancel">
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
@@ -76,30 +78,36 @@
             const verificationOverlay = document.getElementById('verification-overlay');
             const verifyBtn = document.getElementById('verify-btn');
             const resendBtn = document.getElementById('resend-btn');
+            const cancelVerifyBtn = document.getElementById('cancel-verify-btn'); // Nuevo botón de cancelar
+            
+            // URL de tu Backend
             const API_URL = 'https://findme-app-backend.onrender.com';
+            
+            // Variables para almacenar temporalmente el email y la contraseña
+            let tempEmail = '';
+            let tempPassword = '';
 
+            // Función robusta para manejar la respuesta de la API y errores
             async function makeAPIRequest(url, options) {
                 try {
                     const response = await fetch(url, options);
-                    
-                    // Log para depuración
-                    console.log('API Response:', {
-                        status: response.status,
-                        url: response.url,
-                        headers: Object.fromEntries(response.headers)
-                    });
-
-                    if (response.status === 404) {
-                        throw new Error('El servicio de verificación no está disponible temporalmente');
-                    }
-
                     const contentType = response.headers.get('content-type');
-                    if (!contentType || !contentType.includes('application/json')) {
-                        console.error('Tipo de contenido no válido:', contentType);
-                        throw new Error('Respuesta del servidor no válida');
+                    
+                    // Intenta siempre leer el cuerpo (body), asumiendo JSON si es posible
+                    const isJson = contentType && contentType.includes('application/json');
+                    const data = isJson ? await response.json() : await response.text();
+
+                    if (!response.ok) {
+                        // Si hay un error, busca el mensaje en el objeto JSON o usa el texto
+                        const errorMessage = isJson && data.error 
+                            ? data.error 
+                            : typeof data === 'string' && data.length > 0 
+                            ? data 
+                            : `Error de conexión con el servidor (Status: ${response.status})`;
+                        
+                        throw new Error(errorMessage);
                     }
 
-                    const data = await response.json();
                     return { response, data };
                 } catch (error) {
                     console.error('Error detallado:', error);
@@ -110,35 +118,45 @@
                 }
             }
 
+            // =======================================================
+            // 1. EVENTO SUBMIT (Solicitar Código de Verificación)
+            // =======================================================
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
 
                 try {
-                    // Intentar registrar directamente sin verificación por ahora
-                    const { response, data } = await makeAPIRequest(`${API_URL}/api/register`, {
+                    // Paso 1: Llamar al endpoint para solicitar el código
+                    await makeAPIRequest(`${API_URL}/api/register/verify`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
+                        body: JSON.stringify({ email })
                     });
 
-                    if (response.ok) {
-                        alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
-                        window.location.href = 'index.html';
-                    } else {
-                        throw new Error(data.error || 'Error en el registro');
-                    }
+                    // Si la solicitud es exitosa:
+                    tempEmail = email;
+                    tempPassword = password;
+                    document.getElementById('verification-code').value = ''; // Limpiar campo
+                    verificationOverlay.classList.remove('hidden'); // Mostrar el modal
                 } catch (error) {
-                    console.error('Error:', error);
                     alert(error.message);
                 }
             });
 
+            // =======================================================
+            // 2. EVENTO VERIFY (Registro Final)
+            // =======================================================
             verifyBtn.addEventListener('click', async () => {
                 const verificationCode = document.getElementById('verification-code').value;
+                if (!verificationCode || verificationCode.length !== 6) {
+                    alert('Por favor, ingresa el código de 6 dígitos');
+                    return;
+                }
+
                 try {
-                    const { response, data } = await makeAPIRequest(`${API_URL}/api/register`, {
+                    // Paso 2: Registro FINAL con credenciales y código
+                    await makeAPIRequest(`${API_URL}/api/register`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
@@ -148,34 +166,64 @@
                         })
                     });
 
-                    if (response.ok) {
-                        alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
-                        window.location.href = 'index.html';
-                    } else {
-                        throw new Error(data.error || 'Código de verificación inválido');
-                    }
+                    alert('¡Usuario registrado con éxito! Ahora puedes iniciar sesión.');
+                    
+                    // Limpiar variables temporales y redirigir
+                    tempEmail = '';
+                    tempPassword = '';
+                    window.location.href = 'index.html';
                 } catch (error) {
-                    console.error('Error:', error);
                     alert(error.message);
                 }
             });
 
+            // =======================================================
+            // 3. EVENTO RESEND (Reenviar Código)
+            // =======================================================
             resendBtn.addEventListener('click', async () => {
+                if (!tempEmail) {
+                    alert('Error: No hay correo electrónico para reenviar el código');
+                    return;
+                }
+
                 try {
-                    const { response, data } = await makeAPIRequest(`${API_URL}/api/request-verification`, {
+                    // Reenvío de código, usando el mismo endpoint que el primer paso
+                    await makeAPIRequest(`${API_URL}/api/register/verify`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email: tempEmail })
                     });
 
-                    if (response.ok) {
-                        alert('Se ha enviado un nuevo código de verificación.');
-                    } else {
-                        throw new Error(data.error || 'No se pudo reenviar el código');
-                    }
+                    alert('Se ha enviado un nuevo código de verificación.');
                 } catch (error) {
-                    console.error('Error:', error);
                     alert(error.message);
+                }
+            });
+
+            // =======================================================
+            // 4. MANEJO DE UX (Enter y Escape)
+            // =======================================================
+            
+            // Botón de Cancelar en el Overlay
+            cancelVerifyBtn.addEventListener('click', () => {
+                verificationOverlay.classList.add('hidden');
+                // Opcional: limpiar credenciales temporales si se cancela
+                // tempEmail = '';
+                // tempPassword = '';
+            });
+
+            // Prevenir el envío del formulario principal al presionar Enter en el código
+            document.getElementById('verification-code').addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    verifyBtn.click();
+                }
+            });
+            
+            // CERRAR OVERLAY AL PRESIONAR ESC (Mejora de UX)
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !verificationOverlay.classList.contains('hidden')) {
+                    verificationOverlay.classList.add('hidden');
                 }
             });
         });
