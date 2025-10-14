@@ -27,6 +27,11 @@ router.post('/register/verify', async (req, res) => {
     try {
         const { email } = req.body;
 
+        // Validar email
+        if (!email || !email.includes('@')) {
+            return res.status(400).json({ error: 'Email inválido' });
+        }
+
         // Verificar si el email ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
