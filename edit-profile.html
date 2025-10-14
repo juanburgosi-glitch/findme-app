@@ -1,178 +1,250 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>FindMe - Editar Perfil</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-translate-key="edit-profile-title">FindMe - Editar Perfil</title>
+    
     <link rel="icon" type="image/png" href="public/images/favicon.png" />
     <link href="public/css/styles.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-</head>
-<body class="bg-background-dark font-display text-gray-300">
-    <div class="flex flex-col min-h-screen">
-        <header class="flex items-center justify-between p-6 border-b border-border-dark">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 text-primary">
-                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
-                </div>
-                <h1 class="text-xl font-bold text-white">Editar Perfil</h1>
-            </div>
-        </header>
 
-        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="max-w-2xl mx-auto">
-                <form id="edit-profile-form" class="space-y-6 bg-card-dark p-8 rounded-xl border border-border-dark">
-                    <div>
-                        <label for="contact-number" class="block text-sm font-medium text-gray-300">Número de Contacto</label>
-                        <input id="contact-number" name="contactNumber" type="tel" class="mt-1 block w-full px-3 py-3 border-border-dark bg-background-dark text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm" placeholder="Tu número de teléfono">
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    
+    <script src="public/js/translator.js"></script>
+    <style> .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; } </style>
+</head>
+<body class="bg-background-dark font-display text-gray-200">
+    
+    <header class="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="dashboard.html" class="flex items-center gap-2 text-primary">
+                    <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                    <h1 class="text-xl font-bold text-white" data-translate-key="findme-title">FindMe</h1>
+                </a>
+                <div class="relative">
+                    <button id="user-menu-button" class="w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined"> account_circle </span>
+                    </button>
+                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-card-dark rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-30">
+                        <div class="py-1" role="menu">
+                            <a href="edit-profile.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10" data-translate-key="my-profile">Mi Perfil</a>
+                            <a href="settings.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-primary/10" data-translate-key="settings">Ajustes</a>
+                            <div class="border-t border-border-dark my-1"></div>
+                            <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20" data-translate-key="logout">Cerrar Sesión</button>
+                        </div>
                     </div>
-                    <div class="flex justify-end gap-4 pt-4">
-                        <a href="dashboard.html" class="px-6 py-2.5 text-sm font-medium rounded-lg text-gray-300 bg-border-dark hover:bg-opacity-80 transition-colors">Cancelar</a>
-                        <button type="submit" class="px-6 py-2.5 text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-3xl mx-auto">
+            <div class="flex flex-col gap-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-2 text-white" data-translate-key="edit-profile-header">Editar Perfil</h2>
+                    <p class="text-gray-400" data-translate-key="edit-profile-prompt">Actualiza tu información personal.</p>
+                </div>
+                <form id="edit-profile-form" class="space-y-8">
+                    <div class="bg-card-dark p-6 sm:p-8 rounded-xl shadow-md border border-border-dark">
+                        <h3 class="text-xl font-semibold mb-6 text-white" data-translate-key="personal-info-header">Información Personal</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300" data-translate-key="profile-photo-label">Foto de Perfil</label>
+                                <div class="mt-2 flex items-center gap-4">
+                                    <img id="profile-preview" class="h-16 w-16 rounded-full object-cover bg-border-dark" src="https://ui-avatars.com/api/?background=1a2831&color=13a4ec" alt="Vista previa">
+                                    <input type="file" id="profile-image" name="profileImage" accept="image/*" class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"/>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300" for="first-name" data-translate-key="first-name-label">Primer Nombre</label>
+                                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark focus:ring-primary focus:border-primary text-white" id="first-name" type="text"/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300" for="middle-name" data-translate-key="middle-name-label">Segundo Nombre</label>
+                                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark focus:ring-primary focus:border-primary text-white" id="middle-name" type="text"/>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300" for="last-name" data-translate-key="last-name-label">Apellido Paterno</label>
+                                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark focus:ring-primary focus:border-primary text-white" id="last-name" type="text"/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300" for="second-last-name" data-translate-key="second-last-name-label">Apellido Materno</label>
+                                    <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark focus:ring-primary focus:border-primary text-white" id="second-last-name" type="text"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300" for="contact-number" data-translate-key="phone-number-label">Número de Teléfono</label>
+                                <input class="mt-1 block w-full rounded-lg border-border-dark bg-background-dark focus:ring-primary focus:border-primary text-white" id="contact-number" type="tel"/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300" for="email" data-translate-key="email-label">Email</label>
+                                <input class="mt-1 block w-full rounded-lg border-border-dark bg-gray-800 text-gray-400 cursor-not-allowed" id="email" type="email" readonly/>
+                                <p class="mt-1 text-xs text-gray-500" data-translate-key="email-cant-change">El email no se puede modificar.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-2 flex justify-end gap-4">
+                        <a href="dashboard.html" class="px-6 py-2.5 text-sm font-medium rounded-lg text-gray-300 bg-border-dark hover:bg-opacity-80 transition-colors" data-translate-key="cancel">Cancelar</a>
+                        <button class="px-6 py-2.5 text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90" type="submit" data-translate-key="save-changes">Guardar Cambios</button>
                     </div>
                 </form>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
 
-    <!-- Modal de Confirmación -->
-    <div id="confirmation-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-        <div class="bg-card-dark rounded-xl shadow-2xl w-full max-w-md border border-border-dark">
-            <div class="p-6">
-                <h3 class="text-lg font-bold text-white">Confirmar Cambios</h3>
-                <p class="text-sm text-slate-400 mt-2">
-                    Se han detectado los siguientes cambios. ¿Deseas guardarlos?
-                </p>
-                <ul id="changes-list" class="list-disc list-inside text-sm text-slate-300 mt-4 space-y-1">
-                </ul>
+    <!-- Add confirmation dialog -->
+    <div id="confirmation-dialog" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-card-dark p-6 rounded-xl shadow-lg max-w-lg w-full mx-4">
+            <h3 class="text-xl font-semibold mb-4 text-white" data-translate-key="confirm-changes">Confirmar Cambios</h3>
+            <div id="changes-list" class="mb-6 space-y-2 text-gray-300">
+                <!-- Changes will be listed here -->
             </div>
-            <div class="bg-background-dark/50 px-6 py-4 flex justify-end gap-4">
-                <button id="cancel-save-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-border-dark text-white hover:bg-opacity-80">Cancelar</button>
-                <button id="confirm-save-btn" class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-primary hover:bg-primary/90">Guardar</button>
+            <div class="flex justify-end gap-4">
+                <button id="cancel-changes" class="px-6 py-2.5 text-sm font-medium rounded-lg text-gray-300 bg-border-dark hover:bg-opacity-80" data-translate-key="cancel">Cancelar</button>
+                <button id="confirm-changes" class="px-6 py-2.5 text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90" data-translate-key="confirm">Confirmar</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast para Deshacer -->
-    <div id="undo-toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-between gap-4 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg w-auto">
-        <span>Perfil actualizado con éxito.</span>
-        <button id="undo-btn" class="font-bold text-primary hover:underline">Deshacer</button>
-    </div>
-
+    <div id="logout-modal" class="hidden ..."></div>
     <script src="public/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const API_URL = 'https://findme-app-backend.onrender.com';
             const token = localStorage.getItem('token');
             if (!token) {
                 window.location.href = 'index.html';
                 return;
             }
-
+            const API_URL = 'https://findme-app-backend.onrender.com';
             const form = document.getElementById('edit-profile-form');
+            const firstNameInput = document.getElementById('first-name');
+            const middleNameInput = document.getElementById('middle-name');
+            const lastNameInput = document.getElementById('last-name');
+            const secondLastNameInput = document.getElementById('second-last-name');
             const contactNumberInput = document.getElementById('contact-number');
-            
-            const confirmationModal = document.getElementById('confirmation-modal');
-            const changesList = document.getElementById('changes-list');
-            const cancelSaveBtn = document.getElementById('cancel-save-btn');
-            const confirmSaveBtn = document.getElementById('confirm-save-btn');
+            const emailInput = document.getElementById('email');
+            const profileImageInput = document.getElementById('profile-image');
+            const profilePreview = document.getElementById('profile-preview');
 
-            const undoToast = document.getElementById('undo-toast');
-            const undoBtn = document.getElementById('undo-btn');
+            profileImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) { profilePreview.src = URL.createObjectURL(file); }
+            });
 
-            let originalProfileData = {};
-            let newProfileData = {};
-            let undoTimeout;
+            let originalData = {};
 
             async function loadProfile() {
                 try {
                     const response = await fetch(`${API_URL}/api/user/profile`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    if (!response.ok) throw new Error('No se pudo cargar el perfil.');
+                    if (!response.ok) throw new Error('No se pudieron cargar los datos del perfil.');
                     
                     const profile = await response.json();
-                    originalProfileData = {
-                        contactNumber: profile.contact_number || ''
-                    };
                     
-                    contactNumberInput.value = originalProfileData.contactNumber;
+                    if (profile.profile_image_url) {
+                        profilePreview.src = `${API_URL}${profile.profile_image_url}`;
+                    }
+                    
+                    // Store original data for comparison
+                    originalData = {
+                        first_name: profile.first_name || '',
+                        middle_name: profile.middle_name || '',
+                        last_name: profile.last_name || '',
+                        second_last_name: profile.second_last_name || '',
+                        contact_number: profile.contact_number || '',
+                        email: profile.email || ''
+                    };
+
+                    firstNameInput.value = originalData.first_name;
+                    middleNameInput.value = originalData.middle_name;
+                    lastNameInput.value = originalData.last_name;
+                    secondLastNameInput.value = originalData.second_last_name;
+                    contactNumberInput.value = originalData.contact_number;
+                    emailInput.value = originalData.email;
                 } catch (error) {
+                    console.error('Error cargando el perfil:', error);
                     alert(error.message);
                 }
             }
 
-            form.addEventListener('submit', (event) => {
+            const confirmationDialog = document.getElementById('confirmation-dialog');
+            const changesList = document.getElementById('changes-list');
+            const confirmButton = document.getElementById('confirm-changes');
+            const cancelButton = document.getElementById('cancel-changes');
+
+            form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 
-                newProfileData = {
-                    contactNumber: contactNumberInput.value
-                };
-
+                // Compare changes
                 const changes = [];
-                if (originalProfileData.contactNumber !== newProfileData.contactNumber) {
-                    changes.push(`Número de contacto: "${originalProfileData.contactNumber}" → "${newProfileData.contactNumber}"`);
+                if (firstNameInput.value !== originalData.first_name) 
+                    changes.push(`Nombre: ${originalData.first_name} → ${firstNameInput.value}`);
+                if (middleNameInput.value !== originalData.middle_name)
+                    changes.push(`Segundo Nombre: ${originalData.middle_name} → ${middleNameInput.value}`);
+                if (lastNameInput.value !== originalData.last_name)
+                    changes.push(`Apellido Paterno: ${originalData.last_name} → ${lastNameInput.value}`);
+                if (secondLastNameInput.value !== originalData.second_last_name)
+                    changes.push(`Apellido Materno: ${originalData.second_last_name} → ${secondLastNameInput.value}`);
+                if (contactNumberInput.value !== originalData.contact_number)
+                    changes.push(`Teléfono: ${originalData.contact_number} → ${contactNumberInput.value}`);
+                if (profileImageInput.files[0])
+                    changes.push('Nueva foto de perfil seleccionada');
+
+                // Show changes in dialog
+                changesList.innerHTML = changes.length ? 
+                    changes.map(change => `<div>${change}</div>`).join('') :
+                    '<div>No se han realizado cambios</div>';
+                
+                confirmationDialog.classList.remove('hidden');
+            });
+
+            confirmButton.addEventListener('click', async () => {
+                confirmationDialog.classList.add('hidden');
+                const formData = new FormData();
+                formData.append('firstName', firstNameInput.value);
+                formData.append('middleName', middleNameInput.value);
+                formData.append('lastName', lastNameInput.value);
+                formData.append('secondLastName', secondLastNameInput.value);
+                formData.append('contactNumber', contactNumberInput.value);
+                if (profileImageInput.files[0]) {
+                    formData.append('profileImage', profileImageInput.files[0]);
                 }
 
-                if (changes.length === 0) {
-                    alert('No se han realizado cambios.');
-                    return;
-                }
-
-                changesList.innerHTML = changes.map(change => `<li>${change}</li>`).join('');
-                confirmationModal.classList.remove('hidden');
-            });
-
-            cancelSaveBtn.addEventListener('click', () => {
-                confirmationModal.classList.add('hidden');
-            });
-
-            confirmSaveBtn.addEventListener('click', async () => {
-                confirmationModal.classList.add('hidden');
-                await saveProfile(newProfileData);
-            });
-
-            async function saveProfile(dataToSave) {
                 try {
                     const response = await fetch(`${API_URL}/api/user/profile`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(dataToSave)
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
                     });
-
                     const result = await response.json();
-                    if (!response.ok) throw new Error(result.error || 'Error al guardar.');
-
-                    const previousData = { ...originalProfileData };
-                    originalProfileData = { ...dataToSave };
-
-                    showUndoToast(previousData);
-
+                    if (!response.ok) throw new Error(result.error);
+                    
+                    window.location.href = 'dashboard.html';
                 } catch (error) {
-                    alert(`Error: ${error.message}`);
+                    alert(`Error al guardar: ${error.message}`);
                 }
-            }
-            
-            function showUndoToast(dataToRevert) {
-                undoToast.classList.remove('hidden');
-                
-                undoBtn.onclick = async () => {
-                    if (undoTimeout) clearTimeout(undoTimeout);
-                    undoToast.classList.add('hidden');
-                    await saveProfile(dataToRevert);
-                    contactNumberInput.value = dataToRevert.contactNumber;
-                    alert('Cambios deshechos.');
-                };
+            });
 
-                if (undoTimeout) clearTimeout(undoTimeout);
-                undoTimeout = setTimeout(() => {
-                    undoToast.classList.add('hidden');
-                }, 5000);
-            }
+            cancelButton.addEventListener('click', () => {
+                confirmationDialog.classList.add('hidden');
+                // Revert changes
+                firstNameInput.value = originalData.first_name;
+                middleNameInput.value = originalData.middle_name;
+                lastNameInput.value = originalData.last_name;
+                secondLastNameInput.value = originalData.second_last_name;
+                contactNumberInput.value = originalData.contact_number;
+                profileImageInput.value = '';
+                profilePreview.src = originalData.profile_image_url || "https://ui-avatars.com/api/?background=1a2831&color=13a4ec";
+            });
 
             loadProfile();
         });
