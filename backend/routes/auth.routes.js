@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
 const VerificationService = require('../services/verification.service');
 
 // Añadir nuevo endpoint para solicitar verificación
@@ -9,7 +8,8 @@ router.post('/register/verify', async (req, res) => {
         const { email } = req.body;
         
         // Verificar si el email ya existe
-        const existingUser = await User.findOne({ email });
+        const User = require('../models/user.model'); 
+        const existingUser = await User.findByEmail(email);
         if (existingUser) {
             return res.status(400).json({ error: 'El email ya está registrado' });
         }
