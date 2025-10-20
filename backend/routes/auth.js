@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
 const nodemailer = require('nodemailer');
 
 // Almacenamiento temporal de códigos (en producción usar Redis)
@@ -32,8 +31,8 @@ router.post('/register/verify', async (req, res) => {
             return res.status(400).json({ error: 'Email inválido' });
         }
 
-        // Verificar si el email ya existe
-        const existingUser = await User.findOne({ email });
+        const User = require('../models/user.model'); // Asumiendo que creaste el archivo
+        const existingUser = await User.findByEmail(email);
         if (existingUser) {
             return res.status(400).json({ error: 'El email ya está registrado' });
         }
@@ -90,12 +89,9 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Crear usuario
-        const user = new User({
-            email,
-            password: hashedPassword
-        });
-
-        await user.save();
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create(email, hashedPassword);
+        
         verificationCodes.delete(email);
 
         res.status(201).json({ message: 'Usuario registrado exitosamente' });
