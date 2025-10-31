@@ -35,7 +35,7 @@
                     <div class="text-center text-sm">
                         <p class="text-gray-400">
                             <span data-translate-key="no-account-text">¿No tienes una cuenta? </span>
-                            <a href="registro.html" class="font-medium text-primary hover:text-primary/80" data-translate-key="signup-link">Registrarme</a>
+                            <a href="pages/registro.html" class="font-medium text-primary hover:text-primary/80" data-translate-key="signup-link">Registrarme</a>
                         </p>
                     </div>
                 </form>
@@ -90,7 +90,7 @@
                     localStorage.setItem('token', data.token);
                     showToast('¡Inicio de sesión exitoso!');
                     setTimeout(() => {
-                        window.location.href = 'dashboard.html';
+                        window.location.href = 'pages/dashboard.html';
                     }, 1000); // Espera 1 segundo para que se vea el mensaje
                 } else {
                     showToast(`Error: ${data.error}`, false);
