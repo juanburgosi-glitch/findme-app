@@ -90,7 +90,7 @@
                     localStorage.setItem('token', data.token);
                     showToast('¡Inicio de sesión exitoso!');
                     setTimeout(() => {
-                        window.location.href = 'public/dashboard.html';
+                        window.location.href = 'public/dashboard.html' ;
                     }, 1000); // Espera 1 segundo para que se vea el mensaje
                 } else {
                     showToast(`Error: ${data.error}`, false);
