@@ -5,14 +5,14 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title data-translate-key="register-title">FindMe - Crear Cuenta</title>
     
-    <link rel="icon" type="image/png" href="public/images/favicon.png" />
-    <link href="public/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link href="/css/styles.css" rel="stylesheet" />
     
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
     
-    <script src="public/js/translator.js"></script>
+    <script src="/js/translator.js"></script>
 </head>
 <body class="bg-background-dark font-display text-gray-300">
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -38,7 +38,7 @@
                     <button id="submit-btn" class="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90" type="submit" data-translate-key="confirm">
                         Confirmar
                     </button>
-                    <a href="index.html" class="w-full inline-flex justify-center py-3 px-4 border border-border-dark shadow-sm text-sm font-medium rounded-lg text-gray-300 bg-card-dark hover:bg-border-dark" data-translate-key="cancel">
+                    <a href="/index.html" class="w-full inline-flex justify-center py-3 px-4 border border-border-dark shadow-sm text-sm font-medium rounded-lg text-gray-300 bg-card-dark hover:bg-border-dark" data-translate-key="cancel">
                         Cancelar
                     </a>
                 </div>
@@ -171,7 +171,7 @@
                     // Limpiar variables temporales y redirigir
                     tempEmail = '';
                     tempPassword = '';
-                    window.location.href = 'index.html';
+                    window.location.href = '/index.html';
                 } catch (error) {
                     alert(error.message);
                 }
